@@ -460,3 +460,76 @@ footer .copyright {
         padding: 50px 15px;
     }
 }
+/* =========================
+   SIGN UP PAGE
+========================= */
+
+.auth-section {
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+}
+
+.auth-box {
+    width: 100%;
+    max-width: 480px;
+    background: #101119;
+    border: 1px solid #272936;
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 0 40px rgba(255, 23, 79, 0.12);
+}
+
+.auth-box h1 {
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+.auth-text {
+    color: #999aa5;
+    margin-bottom: 30px;
+}
+
+.auth-box form {
+    display: flex;
+    flex-direction: column;
+}
+
+.auth-box label {
+    margin-bottom: 7px;
+    font-weight: bold;
+}
+
+.auth-box input {
+    padding: 14px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    border: 1px solid #3c3d48;
+    background: #06070d;
+    color: white;
+    font-size: 15px;
+    outline: none;
+}
+
+.auth-box input:focus {
+    border-color: #ff174f;
+}
+
+.auth-box form button {
+    width: 100%;
+    margin-top: 5px;
+}
+
+.auth-switch {
+    text-align: center;
+    margin-top: 25px;
+    color: #999aa5;
+}
+
+.auth-switch a {
+    color: #ff174f;
+    text-decoration: none;
+    font-weight: bold;
+}
