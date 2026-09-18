@@ -1,15 +1,127 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>GameLink</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameLink | Find Your Squad</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-    <h1>🎮 GameLink</h1>
-    <p>Find your squad. Play together.</p>
+    <nav>
+        <div class="logo">🎮 Game<span>Link</span></div>
 
-    <button>Find Teammates</button>
+        <div class="nav-links">
+            <a href="#games">Games</a>
+            <a href="#players">Players</a>
+            <a href="#rooms">Rooms</a>
+        </div>
+
+        <button class="login-btn">Login</button>
+    </nav>
+
+
+    <main>
+
+        <section class="hero">
+            <div class="hero-text">
+                <p class="small-title">THE GAMING COMMUNITY</p>
+
+                <h1>
+                    FIND YOUR<br>
+                    <span>SQUAD.</span>
+                </h1>
+
+                <p class="description">
+                    Stop playing alone. Find gamers who play the same games,
+                    build your squad and play together.
+                </p>
+
+                <div class="hero-buttons">
+                    <button class="primary-btn">Find Teammates →</button>
+                    <button class="secondary-btn">Browse Games</button>
+                </div>
+            </div>
+
+            <div class="hero-card">
+                <div class="card-icon">⚡</div>
+                <h2>Looking for teammates?</h2>
+                <p>Connect with gamers and build your perfect squad.</p>
+
+                <div class="online">
+                    <span></span> Gamers online
+                </div>
+            </div>
+        </section>
+
+
+        <section id="games" class="section">
+            <p class="section-label">EXPLORE</p>
+            <h2>Popular Games</h2>
+
+            <div class="game-grid">
+                <div class="game-card">
+                    <div class="game-icon">🔫</div>
+                    <h3>Blood Strike</h3>
+                    <p>Find players</p>
+                </div>
+
+                <div class="game-card">
+                    <div class="game-icon">⚔️</div>
+                    <h3>Brawlhalla</h3>
+                    <p>Find players</p>
+                </div>
+
+                <div class="game-card">
+                    <div class="game-icon">🔥</div>
+                    <h3>Free Fire</h3>
+                    <p>Find players</p>
+                </div>
+
+                <div class="game-card">
+                    <div class="game-icon">⛏️</div>
+                    <h3>Minecraft</h3>
+                    <p>Find players</p>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="players" class="section players">
+            <p class="section-label">COMMUNITY</p>
+            <h2>Find Your Teammates</h2>
+
+            <div class="player-box">
+                <div>
+                    <h3>👤 Solo players</h3>
+                    <p>Looking for someone to play with?</p>
+                </div>
+
+                <button class="primary-btn">Find Players →</button>
+            </div>
+        </section>
+
+
+        <section id="rooms" class="section">
+            <p class="section-label">SQUAD UP</p>
+            <h2>Game Rooms</h2>
+
+            <div class="room-box">
+                <h3>🎮 Create or join a room</h3>
+                <p>Make a room for your game and invite other players.</p>
+                <button class="primary-btn">Create Room</button>
+            </div>
+        </section>
+
+    </main>
+
+
+    <footer>
+        <div class="logo">🎮 Game<span>Link</span></div>
+        <p>Find your squad. Play together.</p>
+        <p>© 2026 GameLink</p>
+    </footer>
 
 </body>
 </html>
