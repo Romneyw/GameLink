@@ -1,20 +1,284 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
 body {
-    background: #111;
+    background: #080808;
     color: white;
-    text-align: center;
-    font-family: Arial;
+    font-family: Arial, sans-serif;
 }
 
-h1 {
-    color: red;
-    font-size: 50px;
+/* NAVBAR */
+
+nav {
+    height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 7%;
+    border-bottom: 1px solid #222;
 }
 
-button {
-    background: red;
+.logo {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.logo span {
+    color: #ff2020;
+}
+
+.nav-links {
+    display: flex;
+    gap: 35px;
+}
+
+.nav-links a {
+    color: #aaa;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.nav-links a:hover {
+    color: #ff2020;
+}
+
+.login-btn {
+    background: transparent;
+    color: white;
+    border: 1px solid #444;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* HERO */
+
+.hero {
+    min-height: 650px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 80px 7%;
+    background: radial-gradient(circle at 80% 50%, #3b0808, #080808 45%);
+}
+
+.hero-text {
+    max-width: 650px;
+}
+
+.small-title,
+.section-label {
+    color: #ff2020;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    margin-bottom: 15px;
+}
+
+.hero h1 {
+    font-size: clamp(60px, 9vw, 110px);
+    line-height: 0.9;
+    margin-bottom: 30px;
+}
+
+.hero h1 span {
+    color: #ff2020;
+}
+
+.description {
+    color: #aaa;
+    font-size: 18px;
+    line-height: 1.7;
+    max-width: 550px;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 35px;
+}
+
+.primary-btn,
+.secondary-btn {
+    padding: 15px 25px;
+    border-radius: 7px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.primary-btn {
+    background: #ff2020;
     color: white;
     border: none;
-    padding: 15px 25px;
-    border-radius: 8px;
-    font-size: 18px;
+}
+
+.primary-btn:hover {
+    background: #d90000;
+}
+
+.secondary-btn {
+    background: transparent;
+    color: white;
+    border: 1px solid #444;
+}
+
+/* HERO CARD */
+
+.hero-card {
+    width: 330px;
+    padding: 35px;
+    background: #111;
+    border: 1px solid #292929;
+    border-radius: 15px;
+    box-shadow: 0 0 50px #260000;
+}
+
+.card-icon {
+    font-size: 45px;
+    margin-bottom: 20px;
+}
+
+.hero-card h2 {
+    margin-bottom: 12px;
+}
+
+.hero-card p {
+    color: #999;
+    line-height: 1.6;
+}
+
+.online {
+    margin-top: 30px;
+    color: #aaa;
+}
+
+.online span {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    background: #20e070;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+/* SECTIONS */
+
+.section {
+    padding: 90px 7%;
+}
+
+.section h2 {
+    font-size: 42px;
+    margin-bottom: 35px;
+}
+
+/* GAMES */
+
+.game-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.game-card {
+    background: #111;
+    border: 1px solid #242424;
+    padding: 30px;
+    border-radius: 12px;
+    transition: 0.3s;
+}
+
+.game-card:hover {
+    transform: translateY(-7px);
+    border-color: #ff2020;
+}
+
+.game-icon {
+    font-size: 40px;
+    margin-bottom: 20px;
+}
+
+.game-card p {
+    color: #777;
+    margin-top: 8px;
+}
+
+/* PLAYERS */
+
+.players {
+    background: #0d0d0d;
+}
+
+.player-box,
+.room-box {
+    background: #151515;
+    border: 1px solid #292929;
+    border-radius: 12px;
+    padding: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.player-box p,
+.room-box p {
+    color: #888;
+    margin-top: 8px;
+}
+
+.room-box {
+    display: block;
+}
+
+.room-box .primary-btn {
+    margin-top: 25px;
+}
+
+/* FOOTER */
+
+footer {
+    padding: 50px 7%;
+    border-top: 1px solid #222;
+    color: #777;
+}
+
+footer p {
+    margin-top: 10px;
+}
+
+/* MOBILE */
+
+@media (max-width: 800px) {
+
+    .nav-links {
+        display: none;
+    }
+
+    .hero {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 50px;
+    }
+
+    .hero-card {
+        width: 100%;
+    }
+
+    .game-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .player-box {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 25px;
+    }
 }
