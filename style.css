@@ -1,284 +1,391 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-html {
-    scroll-behavior: smooth;
-}
+    <title>GameLink | Find Your Squad</title>
 
-body {
-    background: #080808;
-    color: white;
-    font-family: Arial, sans-serif;
-}
+    <link rel="stylesheet" href="style.css">
+</head>
 
-/* NAVBAR */
+<body>
 
-nav {
-    height: 75px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 7%;
-    border-bottom: 1px solid #222;
-}
+<header>
+    <nav>
+        <div class="logo">
+            🎮 <span>Game</span>Link
+        </div>
 
-.logo {
-    font-size: 25px;
-    font-weight: bold;
-}
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <a href="#games">Games</a>
+            <a href="#players">Players</a>
+            <a href="#rooms">Rooms</a>
+        </div>
 
-.logo span {
-    color: #ff2020;
-}
+        <div class="nav-buttons">
+            <button class="login">Login</button>
+            <button class="signup">Sign Up</button>
+        </div>
+    </nav>
+</header>
 
-.nav-links {
-    display: flex;
-    gap: 35px;
-}
 
-.nav-links a {
-    color: #aaa;
-    text-decoration: none;
-    transition: 0.3s;
-}
+<section class="hero">
 
-.nav-links a:hover {
-    color: #ff2020;
-}
+    <div class="hero-content">
 
-.login-btn {
-    background: transparent;
-    color: white;
-    border: 1px solid #444;
-    padding: 10px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-}
+        <p class="tag">THE ULTIMATE GAMING COMMUNITY</p>
 
-/* HERO */
+        <h1>
+            FIND YOUR
+            <span>SQUAD.</span>
+        </h1>
 
-.hero {
-    min-height: 650px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 80px 7%;
-    background: radial-gradient(circle at 80% 50%, #3b0808, #080808 45%);
-}
+        <p class="hero-text">
+            Stop playing alone. Find teammates, join game rooms,
+            and connect with gamers who love the same games you do.
+        </p>
 
-.hero-text {
-    max-width: 650px;
-}
+        <div class="hero-buttons">
+            <button class="main-button">
+                👥 Find Teammates →
+            </button>
 
-.small-title,
-.section-label {
-    color: #ff2020;
-    font-size: 13px;
-    font-weight: bold;
-    letter-spacing: 3px;
-    margin-bottom: 15px;
-}
+            <button class="outline-button">
+                🎮 Browse Games
+            </button>
+        </div>
 
-.hero h1 {
-    font-size: clamp(60px, 9vw, 110px);
-    line-height: 0.9;
-    margin-bottom: 30px;
-}
+    </div>
 
-.hero h1 span {
-    color: #ff2020;
-}
 
-.description {
-    color: #aaa;
-    font-size: 18px;
-    line-height: 1.7;
-    max-width: 550px;
-}
+    <div class="hero-box">
 
-.hero-buttons {
-    display: flex;
-    gap: 15px;
-    margin-top: 35px;
-}
+        <div class="hero-icon">
+            👥
+        </div>
 
-.primary-btn,
-.secondary-btn {
-    padding: 15px 25px;
-    border-radius: 7px;
-    font-size: 15px;
-    font-weight: bold;
-    cursor: pointer;
-}
+        <h2>Looking for teammates?</h2>
 
-.primary-btn {
-    background: #ff2020;
-    color: white;
-    border: none;
-}
+        <p>
+            Find gamers who play your favorite games
+            and build your squad.
+        </p>
 
-.primary-btn:hover {
-    background: #d90000;
-}
+        <div class="online">
+            <span></span>
+            Gamers online
+        </div>
 
-.secondary-btn {
-    background: transparent;
-    color: white;
-    border: 1px solid #444;
-}
+    </div>
 
-/* HERO CARD */
+</section>
 
-.hero-card {
-    width: 330px;
-    padding: 35px;
-    background: #111;
-    border: 1px solid #292929;
-    border-radius: 15px;
-    box-shadow: 0 0 50px #260000;
-}
 
-.card-icon {
-    font-size: 45px;
-    margin-bottom: 20px;
-}
 
-.hero-card h2 {
-    margin-bottom: 12px;
-}
+<section id="games" class="games-section">
 
-.hero-card p {
-    color: #999;
-    line-height: 1.6;
-}
+    <div class="section-heading">
 
-.online {
-    margin-top: 30px;
-    color: #aaa;
-}
+        <div>
+            <p class="tag">EXPLORE</p>
+            <h2>Popular Games</h2>
+            <p>Find players for your favorite games.</p>
+        </div>
 
-.online span {
-    display: inline-block;
-    width: 9px;
-    height: 9px;
-    background: #20e070;
-    border-radius: 50%;
-    margin-right: 8px;
-}
+        <button class="view-button">
+            View All Games →
+        </button>
 
-/* SECTIONS */
+    </div>
 
-.section {
-    padding: 90px 7%;
-}
 
-.section h2 {
-    font-size: 42px;
-    margin-bottom: 35px;
-}
+    <div class="game-grid">
 
-/* GAMES */
 
-.game-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-}
+        <!-- BLOOD STRIKE -->
 
-.game-card {
-    background: #111;
-    border: 1px solid #242424;
-    padding: 30px;
-    border-radius: 12px;
-    transition: 0.3s;
-}
+        <div class="game-card bloodstrike">
 
-.game-card:hover {
-    transform: translateY(-7px);
-    border-color: #ff2020;
-}
+            <div class="game-image">
 
-.game-icon {
-    font-size: 40px;
-    margin-bottom: 20px;
-}
+                <div class="game-symbol">
+                    🔫
+                </div>
 
-.game-card p {
-    color: #777;
-    margin-top: 8px;
-}
+                <span class="game-badge">
+                    FPS
+                </span>
 
-/* PLAYERS */
+            </div>
 
-.players {
-    background: #0d0d0d;
-}
+            <div class="game-info">
 
-.player-box,
-.room-box {
-    background: #151515;
-    border: 1px solid #292929;
-    border-radius: 12px;
-    padding: 35px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
+                <h3>Blood Strike</h3>
 
-.player-box p,
-.room-box p {
-    color: #888;
-    margin-top: 8px;
-}
+                <p>
+                    <span class="green-dot"></span>
+                    Find players
+                </p>
 
-.room-box {
-    display: block;
-}
+                <button class="game-button">
+                    →
+                </button>
 
-.room-box .primary-btn {
-    margin-top: 25px;
-}
+            </div>
 
-/* FOOTER */
+        </div>
 
-footer {
-    padding: 50px 7%;
-    border-top: 1px solid #222;
-    color: #777;
-}
 
-footer p {
-    margin-top: 10px;
-}
 
-/* MOBILE */
+        <!-- BRAWLHALLA -->
 
-@media (max-width: 800px) {
+        <div class="game-card brawlhalla">
 
-    .nav-links {
-        display: none;
-    }
+            <div class="game-image">
 
-    .hero {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 50px;
-    }
+                <div class="game-symbol">
+                    ⚔️
+                </div>
 
-    .hero-card {
-        width: 100%;
-    }
+                <span class="game-badge">
+                    FIGHTING
+                </span>
 
-    .game-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
+            </div>
 
-    .player-box {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 25px;
-    }
-}
+            <div class="game-info">
+
+                <h3>Brawlhalla</h3>
+
+                <p>
+                    <span class="green-dot"></span>
+                    Find players
+                </p>
+
+                <button class="game-button">
+                    →
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- FREE FIRE -->
+
+        <div class="game-card freefire">
+
+            <div class="game-image">
+
+                <div class="game-symbol">
+                    🔥
+                </div>
+
+                <span class="game-badge">
+                    BATTLE ROYALE
+                </span>
+
+            </div>
+
+            <div class="game-info">
+
+                <h3>Free Fire</h3>
+
+                <p>
+                    <span class="green-dot"></span>
+                    Find players
+                </p>
+
+                <button class="game-button">
+                    →
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- FORTNITE -->
+
+        <div class="game-card fortnite">
+
+            <div class="game-image">
+
+                <div class="game-symbol">
+                    🪂
+                </div>
+
+                <span class="game-badge">
+                    BATTLE ROYALE
+                </span>
+
+            </div>
+
+            <div class="game-info">
+
+                <h3>Fortnite</h3>
+
+                <p>
+                    <span class="green-dot"></span>
+                    Find players
+                </p>
+
+                <button class="game-button">
+                    →
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- MINECRAFT -->
+
+        <div class="game-card minecraft">
+
+            <div class="game-image">
+
+                <div class="game-symbol">
+                    ⛏️
+                </div>
+
+                <span class="game-badge">
+                    SURVIVAL
+                </span>
+
+            </div>
+
+            <div class="game-info">
+
+                <h3>Minecraft</h3>
+
+                <p>
+                    <span class="green-dot"></span>
+                    Find players
+                </p>
+
+                <button class="game-button">
+                    →
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- CALL OF DUTY -->
+
+        <div class="game-card cod">
+
+            <div class="game-image">
+
+                <div class="game-symbol">
+                    🎯
+                </div>
+
+                <span class="game-badge">
+                    FPS
+                </span>
+
+            </div>
+
+            <div class="game-info">
+
+                <h3>Call of Duty</h3>
+
+                <p>
+                    <span class="green-dot"></span>
+                    Find players
+                </p>
+
+                <button class="game-button">
+                    →
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<section id="players" class="feature-section">
+
+    <div class="feature-card">
+
+        <div class="feature-icon">
+            👥
+        </div>
+
+        <div>
+            <p class="tag">TEAM UP</p>
+            <h2>Find Teammates</h2>
+
+            <p>
+                Browse players who play the same games,
+                have similar skills, and are looking for a squad.
+            </p>
+
+            <button class="main-button">
+                Find Players →
+            </button>
+        </div>
+
+    </div>
+
+
+    <div id="rooms" class="feature-card">
+
+        <div class="feature-icon">
+            🏠
+        </div>
+
+        <div>
+            <p class="tag">SQUAD UP</p>
+            <h2>Game Rooms</h2>
+
+            <p>
+                Create or join rooms for your favorite games
+                and start playing together.
+            </p>
+
+            <button class="main-button">
+                Browse Rooms →
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<footer>
+
+    <div class="logo">
+        🎮 <span>Game</span>Link
+    </div>
+
+    <p>
+        Find your squad. Play together.
+    </p>
+
+    <p class="copyright">
+        © 2026 GameLink
+    </p>
+
+</footer>
+
+</body>
+</html>
