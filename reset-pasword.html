@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameLink | Reset Password</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <nav>
+        <div class="logo">🎮 <span>Game</span>Link</div>
+        <div class="nav-buttons">
+            <a href="login.html" class="login">Back to Login</a>
+        </div>
+    </nav>
+</header>
+
+<section class="auth-section">
+    <div class="auth-box">
+        <p class="tag">ACCOUNT RECOVERY</p>
+        <h1>Reset Your Password</h1>
+        <p class="auth-text">
+            Choose a new password for your GameLink account.
+        </p>
+
+        <form id="reset-password-form">
+            <label for="new-password">New password</label>
+            <input
+                type="password"
+                id="new-password"
+                autocomplete="new-password"
+                placeholder="Enter a new password"
+                minlength="8"
+                required
+            >
+
+            <label for="confirm-password">Confirm new password</label>
+            <input
+                type="password"
+                id="confirm-password"
+                autocomplete="new-password"
+                placeholder="Enter it again"
+                minlength="8"
+                required
+            >
+
+            <button type="submit" class="main-button" disabled>
+                Update Password →
+            </button>
+        </form>
+
+        <p id="reset-status" class="auth-text" role="status">
+            Password reset setup is not complete yet.
+        </p>
+    </div>
+</section>
+
+<footer>
+    <div class="logo">🎮 <span>Game</span>Link</div>
+    <p>Find your squad. Play together.</p>
+</footer>
+
+</body>
+</html>
