@@ -1,3 +1,4 @@
+console.log("GAMELINK SCRIPT IS WORKING!");
 const SUPABASE_URL = "https://arlhkjocegnppfziikpo.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_aWWQyhe1KrXskToB9nU2_A_SsFpUPbv";
 
