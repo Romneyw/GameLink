@@ -73,3 +73,72 @@ if (loginForm) {
 
     loginButton.disabled = false;
 }
+const resetForm = document.getElementById("reset-password-form");
+
+if (resetForm) {
+    const resetButton = resetForm.querySelector('button[type="submit"]');
+    const resetStatus = document.getElementById("reset-status");
+    let recoveryReady = false;
+
+    resetStatus.textContent =
+        "Open this page using the password-reset link in your email.";
+
+    supabaseClient.auth.onAuthStateChange(function (event, session) {
+        if (event === "PASSWORD_RECOVERY" && session) {
+            recoveryReady = true;
+            resetButton.disabled = false;
+            resetStatus.textContent = "Enter your new password below.";
+        }
+
+        if (event === "SIGNED_OUT") {
+            recoveryReady = false;
+            resetButton.disabled = true;
+            resetStatus.textContent =
+                "Please request a new password-reset email.";
+        }
+    });
+
+    resetForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        if (!recoveryReady) {
+            resetStatus.textContent =
+                "Please open a fresh password-reset link from your email.";
+            return;
+        }
+
+        const password = document.getElementById("new-password").value;
+        const confirmation =
+            document.getElementById("confirm-password").value;
+
+        if (password !== confirmation) {
+            resetStatus.textContent = "The passwords do not match.";
+            return;
+        }
+
+        resetButton.disabled = true;
+        resetButton.textContent = "Updating...";
+
+        try {
+            const { error } = await supabaseClient.auth.updateUser({
+                password: password
+            });
+
+            if (error) {
+                resetStatus.textContent = error.message;
+                return;
+            }
+
+            recoveryReady = false;
+            resetForm.reset();
+            resetStatus.textContent =
+                "Password updated! Use Back to Login to log in with it.";
+        } catch (error) {
+            resetStatus.textContent =
+                "Unable to update your password. Check your connection.";
+        } finally {
+            resetButton.disabled = !recoveryReady;
+            resetButton.textContent = "Update Password →";
+        }
+    });
+}
