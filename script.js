@@ -6,4 +6,32 @@ const supabaseClient = supabase.createClient(
     SUPABASE_PUBLISHABLE_KEY
 );
 
-console.log("GameLink connected to Supabase!");
+const signupForm = document.getElementById("signup-form");
+
+if (signupForm) {
+    signupForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const username = document.getElementById("username").value;
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        const { data, error } = await supabaseClient.auth.signUp({
+            email: email,
+            password: password,
+            options: {
+                data: {
+                    username: username
+                }
+            }
+        });
+
+        if (error) {
+            alert("Signup failed: " + error.message);
+            return;
+        }
+
+        alert("Account created! Check your email to verify your account.");
+        signupForm.reset();
+    });
+}
