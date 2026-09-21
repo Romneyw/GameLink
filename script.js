@@ -63,7 +63,7 @@ if (loginForm) {
             }
 
             alert("Login successful! Welcome to GameLink.");
-            window.location.href = "index.html";
+window.location.href = "dashboard.html";
         } catch (error) {
             alert("Unable to log in. Check your connection and try again.");
         } finally {
