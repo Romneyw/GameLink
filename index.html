@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>GameLink | Find Your Squad</title>
-
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -13,31 +11,39 @@
 
 <header>
     <nav>
-        <div class="logo">
-            🎮 <span>Game</span>Link
-        </div>
+        <div class="logo">🎮 <span>Game</span>Link</div>
 
         <div class="nav-links">
-            <a href="#">Home</a>
+            <a href="index.html">Home</a>
             <a href="#games">Games</a>
             <a href="#players">Players</a>
             <a href="#rooms">Rooms</a>
         </div>
 
         <div class="nav-buttons">
-            <button class="login">Login</button>
-       <a href="signup.html">
-    <button class="signup">Sign Up</button>
-</a>
+            <button
+                type="button"
+                class="login"
+                id="home-account-button"
+                disabled
+            >
+                Loading…
+            </button>
+
+            <button
+                type="button"
+                class="signup"
+                id="home-auth-button"
+                disabled
+            >
+                Please wait…
+            </button>
         </div>
     </nav>
 </header>
 
-
 <section class="hero">
-
     <div class="hero-content">
-
         <p class="tag">THE ULTIMATE GAMING COMMUNITY</p>
 
         <h1>
@@ -51,23 +57,26 @@
         </p>
 
         <div class="hero-buttons">
-            <button class="main-button">
+            <button
+                type="button"
+                class="main-button"
+                onclick="document.getElementById('players').scrollIntoView({ behavior: 'smooth' })"
+            >
                 👥 Find Teammates →
             </button>
 
-            <button class="outline-button">
+            <button
+                type="button"
+                class="outline-button"
+                onclick="document.getElementById('games').scrollIntoView({ behavior: 'smooth' })"
+            >
                 🎮 Browse Games
             </button>
         </div>
-
     </div>
 
-
     <div class="hero-box">
-
-        <div class="hero-icon">
-            👥
-        </div>
+        <div class="hero-icon">👥</div>
 
         <h2>Looking for teammates?</h2>
 
@@ -78,227 +87,145 @@
 
         <div class="online">
             <span></span>
-            Gamers online
+            Find your gaming community
         </div>
-
     </div>
-
 </section>
 
-
-
 <section id="games" class="games-section">
-
     <div class="section-heading">
-
         <div>
             <p class="tag">EXPLORE</p>
             <h2>Popular Games</h2>
             <p>Find players for your favorite games.</p>
         </div>
 
-        <button class="view-button">
+        <button
+            type="button"
+            class="view-button"
+            data-coming-soon="The full game directory"
+        >
             View All Games →
         </button>
-
     </div>
-
 
     <div class="game-grid">
-
-
-        <!-- BLOOD STRIKE -->
-
         <div class="game-card bloodstrike">
-
             <div class="game-image">
-
-               <img src="images/bloodstrike.jfif" alt="Blood Strike">
-                <span class="game-badge">
-                    FPS
-                </span>
-
+                <img src="images/bloodstrike.jfif" alt="Blood Strike">
+                <span class="game-badge">FPS</span>
             </div>
 
             <div class="game-info">
-
                 <h3>Blood Strike</h3>
-
-                <p>
-                    <span class="green-dot"></span>
-                    Find players
-                </p>
-
-                <button class="game-button">
-                    →
-                </button>
-
+                <p><span class="green-dot"></span> Find players</p>
+                <button
+                    type="button"
+                    class="game-button"
+                    aria-label="Find Blood Strike players"
+                    data-coming-soon="Blood Strike player search"
+                >→</button>
             </div>
-
         </div>
-
-
-
-        <!-- BRAWLHALLA -->
 
         <div class="game-card brawlhalla">
-
             <div class="game-image">
-
-               <img src="images/brawlhalla.jfif" alt="Brawlhalla">
-
-                <span class="game-badge">
-                    FIGHTING
-                </span>
-
+                <img src="images/brawlhalla.jfif" alt="Brawlhalla">
+                <span class="game-badge">FIGHTING</span>
             </div>
 
             <div class="game-info">
-
                 <h3>Brawlhalla</h3>
-
-                <p>
-                    <span class="green-dot"></span>
-                    Find players
-                </p>
-
-                <button class="game-button">
-                    →
-                </button>
-
+                <p><span class="green-dot"></span> Find players</p>
+                <button
+                    type="button"
+                    class="game-button"
+                    aria-label="Find Brawlhalla players"
+                    data-coming-soon="Brawlhalla player search"
+                >→</button>
             </div>
-
         </div>
-
-
-
-        <!-- FREE FIRE -->
 
         <div class="game-card freefire">
-
             <div class="game-image">
-
-             <img src="images/freefire.jfif" alt="Free Fire">
-
-                <span class="game-badge">
-                    BATTLE ROYALE
-                </span>
-
+                <img src="images/freefire.jfif" alt="Free Fire">
+                <span class="game-badge">BATTLE ROYALE</span>
             </div>
 
             <div class="game-info">
-
                 <h3>Free Fire</h3>
-
-                <p>
-                    <span class="green-dot"></span>
-                    Find players
-                </p>
-
-                <button class="game-button">
-                    →
-                </button>
-
+                <p><span class="green-dot"></span> Find players</p>
+                <button
+                    type="button"
+                    class="game-button"
+                    aria-label="Find Free Fire players"
+                    data-coming-soon="Free Fire player search"
+                >→</button>
             </div>
-
         </div>
-
-
-
-        <!-- FORTNITE -->
 
         <div class="game-card fortnite">
-
             <div class="game-image">
-
-              <img src="images/fortnite.jfif" alt="Fortnite">
-
-                <span class="game-badge">
-                    BATTLE ROYALE
-                </span>
-
+                <img src="images/fortnite.jfif" alt="Fortnite">
+                <span class="game-badge">BATTLE ROYALE</span>
             </div>
 
             <div class="game-info">
-
                 <h3>Fortnite</h3>
-
-                <p>
-                    <span class="green-dot"></span>
-                    Find players
-                </p>
-
-                <button class="game-button">
-                    →
-                </button>
-
+                <p><span class="green-dot"></span> Find players</p>
+                <button
+                    type="button"
+                    class="game-button"
+                    aria-label="Find Fortnite players"
+                    data-coming-soon="Fortnite player search"
+                >→</button>
             </div>
-
         </div>
-
-
-
-        <!-- MINECRAFT -->
 
         <div class="game-card minecraft">
-
             <div class="game-image">
-
-               <img src="images/minecraft.jfif" alt="Minecraft">
-                <span class="game-badge">
-                    SURVIVAL
-                </span>
-
+                <img src="images/minecraft.jfif" alt="Minecraft">
+                <span class="game-badge">SURVIVAL</span>
             </div>
 
             <div class="game-info">
-
                 <h3>Minecraft</h3>
+                <p><span class="green-dot"></span> Find players</p>
+                <button
+                    type="button"
+                    class="game-button"
+                    aria-label="Find Minecraft players"
+                    data-coming-soon="Minecraft player search"
+                >→</button>
+            </div>
+        </div>
 
-                <p>
-                    <span class="green-dot"></span>
-                    Find players
-                </p>
-
-                <button class="game-button">
-                    →
-                </button>
-
+        <div class="game-card">
+            <div class="game-image">
+                <img
+                    src="images/call of duty mobile.jfif"
+                    alt="Call of Duty Mobile"
+                >
+                <span class="game-badge">FPS</span>
             </div>
 
+            <div class="game-info">
+                <h3>Call of Duty Mobile</h3>
+                <p>Find teammates and dominate the battlefield.</p>
+                <button
+                    type="button"
+                    class="game-button"
+                    aria-label="Find Call of Duty Mobile players"
+                    data-coming-soon="Call of Duty Mobile player search"
+                >→</button>
+            </div>
         </div>
-
-
-
-        <!-- CALL OF DUTY -->
-<div class="game-card">
-    <div class="game-image">
-        <img src="images/call of duty mobile.jfif" alt="Call of Duty Mobile">
-        <span class="game-badge">FPS</span>
     </div>
-
-    <div class="game-info">
-        <h3>Call of Duty Mobile</h3>
-        <p>Find teammates and dominate the battlefield.</p>
-        <button class="game-button">→</button>
-    </div>
-</div>
-     
-
-             
-    </div>
-
 </section>
 
-
-
 <section id="players" class="feature-section">
-
     <div class="feature-card">
-
-        <div class="feature-icon">
-            👥
-        </div>
+        <div class="feature-icon">👥</div>
 
         <div>
             <p class="tag">TEAM UP</p>
@@ -309,19 +236,18 @@
                 have similar skills, and are looking for a squad.
             </p>
 
-            <button class="main-button">
+            <button
+                type="button"
+                class="main-button"
+                data-coming-soon="Player search"
+            >
                 Find Players →
             </button>
         </div>
-
     </div>
 
-
     <div id="rooms" class="feature-card">
-
-        <div class="feature-icon">
-            🏠
-        </div>
+        <div class="feature-icon">🏠</div>
 
         <div>
             <p class="tag">SQUAD UP</p>
@@ -332,36 +258,25 @@
                 and start playing together.
             </p>
 
-            <button class="main-button">
+            <button
+                type="button"
+                class="main-button"
+                data-coming-soon="Game rooms"
+            >
                 Browse Rooms →
             </button>
-
         </div>
-
     </div>
-
 </section>
 
-
-
 <footer>
-
-    <div class="logo">
-        🎮 <span>Game</span>Link
-    </div>
-
-    <p>
-        Find your squad. Play together.
-    </p>
-
-    <p class="copyright">
-        © 2026 GameLink
-    </p>
-
+    <div class="logo">🎮 <span>Game</span>Link</div>
+    <p>Find your squad. Play together.</p>
+    <p class="copyright">© 2026 GameLink</p>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="script.js"></script>
+<script src="script.js?v=7"></script>
 
 </body>
 </html>
