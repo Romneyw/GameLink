@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameLink | Find Teammates</title>
+
+    <style>
+        * { box-sizing: border-box; }
+        [hidden] { display: none !important; }
+
+        body {
+            margin: 0;
+            background: #06070d;
+            color: #f5f5fa;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            border-bottom: 1px solid #242532;
+            background: #0b0c14;
+        }
+
+        nav {
+            max-width: 1100px;
+            margin: auto;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            text-decoration: none;
+            color: white;
+        }
+
+        .logo span { color: #ff174f; }
+
+        .back {
+            color: #ddd;
+            text-decoration: none;
+            border: 1px solid #343543;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: auto;
+            padding: 36px 20px 60px;
+        }
+
+        .intro {
+            padding: 28px;
+            border: 1px solid #383041;
+            border-radius: 20px;
+            background:
+                radial-gradient(ellipse at top right, #ff174f25, transparent 70%),
+                #11131e;
+            margin-bottom: 24px;
+        }
+
+        .tag {
+            color: #ff6387;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        h1 {
+            font-size: clamp(28px, 5vw, 44px);
+            margin: 14px 0;
+            letter-spacing: -1px;
+        }
+
+        .muted {
+            color: #a6a8ba;
+            line-height: 1.7;
+        }
+
+        fieldset {
+            margin: 0;
+            padding: 22px;
+            min-width: 0;
+            border: 1px solid #292b39;
+            border-radius: 18px;
+            background: #10121b;
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #d5d5e2;
+            font-size: 13px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #343645;
+            border-radius: 10px;
+            background: #080a12;
+            color: white;
+            font: inherit;
+            min-height: 46px;
+        }
+
+        input:disabled { opacity: 0.5; }
+
+        button {
+            padding: 13px 19px;
+            border: 1px solid #343645;
+            border-radius: 10px;
+            background: #191b29;
+            color: white;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        button.primary {
+            background: #ff174f;
+            border-color: #ff174f;
+        }
+
+        button:disabled {
+            opacity: 0.45;
+            cursor: default;
+        }
+
+        .actions, .pagination {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        #status {
+            margin: 24px 0;
+            color: #b8bbce;
+            line-height: 1.6;
+        }
+
+        .results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 18px;
+        }
+
+        .player {
+            background: #11131e;
+            border: 1px solid #303042;
+            border-radius: 18px;
+            padding: 24px;
+            overflow-wrap: anywhere;
+        }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            background: #ff174f20;
+            color: #ff8eac;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .player h2 {
+            margin: 0 0 10px;
+            font-size: 23px;
+        }
+
+        .player p {
+            font-size: 14px;
+            line-height: 1.7;
+            color: #abaec1;
+            white-space: pre-wrap;
+        }
+
+        .ranks {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 18px;
+        }
+
+        .rank {
+            background: #ff174f12;
+            color: #ffb4c8;
+            border: 1px solid #ff174f26;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        a:focus-visible, button:focus-visible,
+        input:focus-visible, select:focus-visible {
+            outline: 3px solid #ff8eac;
+            outline-offset: 3px;
+        }
+
+        @media (max-width: 500px) {
+            .results { grid-template-columns: 1fr; }
+            .intro { padding: 22px; }
+            .back { font-size: 12px; }
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <nav>
+        <a href="dashboard.html" class="logo">
+            🎮 <span>Game</span>Link
+        </a>
+        <a href="dashboard.html" class="back">← My Dashboard</a>
+    </nav>
+</header>
+
+<main>
+    <section class="intro">
+        <p class="tag">FIND YOUR SQUAD</p>
+        <h1>Meet your next teammate.</h1>
+        <p class="muted">
+            Find gamers who play your games, speak your language,
+            and match your rank.
+        </p>
+    </section>
+
+    <form id="search-form">
+        <fieldset id="filter-fields">
+            <legend>Search players</legend>
+
+            <div class="filters">
+                <div>
+                    <label for="name">Gamer name</label>
+                    <input id="name" placeholder="Search a name" maxlength="40">
+                </div>
+
+                <div>
+                    <label for="game">Game</label>
+                    <select id="game">
+                        <option value="">All games</option>
+                        <option>Blood Strike</option>
+                        <option>Brawlhalla</option>
+                        <option>Free Fire</option>
+                        <option>Fortnite</option>
+                        <option>Minecraft</option>
+                        <option>Call of Duty Mobile</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="rank">Rank / experience</label>
+                    <input
+                        id="rank"
+                        placeholder="Choose a game first"
+                        maxlength="60"
+                        disabled
+                    >
+                </div>
+
+                <div>
+                    <label for="country">Country</label>
+                    <input
+                        id="country"
+                        placeholder="For example: Cameroon"
+                        maxlength="100"
+                    >
+                </div>
+
+                <div>
+                    <label for="language">Language</label>
+                    <select id="language">
+                        <option value="">All languages</option>
+                        <option>English</option>
+                        <option>French</option>
+                        <option>English and French</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button type="submit" class="primary">Find Teammates →</button>
+                <button type="button" id="clear">Clear Filters</button>
+            </div>
+        </fieldset>
+    </form>
+
+    <p id="status" role="status" aria-live="polite">
+        Checking your account…
+    </p>
+
+    <div id="results" class="results"></div>
+
+    <div id="pagination" class="pagination" hidden>
+        <button id="previous" type="button">← Previous</button>
+        <span id="page-label"></span>
+        <button id="next" type="button">Next →</button>
+    </div>
+
+    <p class="muted">
+        Ranks are player-entered and not verified.
+        Messaging and squad invitations are coming later.
+    </p>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+(function () {
+    const form = document.getElementById("search-form");
+    const fields = document.getElementById("filter-fields");
+    const status = document.getElementById("status");
+    const results = document.getElementById("results");
+    const gameInput = document.getElementById("game");
+    const rankInput = document.getElementById("rank");
+    const pagination = document.getElementById("pagination");
+    const previous = document.getElementById("previous");
+    const next = document.getElementById("next");
+
+    const pageSize = 12;
+    let page = 0;
+    let userId = null;
+    let busy = false;
+    let client = null;
+    let filters = {};
+
+    function updateRankInput() {
+        rankInput.disabled = !gameInput.value;
+        rankInput.placeholder = gameInput.value
+            ? "For example: Gold or Unranked"
+            : "Choose a game first";
+
+        if (!gameInput.value) rankInput.value = "";
+    }
+
+    function readFilters() {
+        return {
+            name: document.getElementById("name").value.trim(),
+            game: gameInput.value,
+            rank: rankInput.value.trim(),
+            country: document.getElementById("country").value.trim(),
+            language: document.getElementById("language").value
+        };
+    }
+
+    function textElement(tag, text, className) {
+        const element = document.createElement(tag);
+        element.textContent = text;
+        if (className) element.className = className;
+        return element;
+    }
+
+    // Escape pattern characters so names are searched as typed.
+    function containsText(value) {
+        const escaped = value.replace(/[\\%_*]/g, function (character) {
+            return "\\" + character;
+        });
+        return "%" + escaped + "%";
+    }
+
+    async function withTimeout(request) {
+        let timer;
+        try {
+            return await Promise.race([
+                request,
+                new Promise(function (_, reject) {
+                    timer = setTimeout(function () {
+                        reject(new Error(
+                            "Connection took too long. Please try searching again."
+                        ));
+                    }, 15000);
+                })
+            ]);
+        } finally {
+            clearTimeout(timer);
+        }
+    }
+
+    async function ensureUser() {
+        if (userId) return true;
+
+        if (!window.supabase) {
+            throw new Error(
+                "GameLink could not load. Refresh this page and try again."
+            );
+        }
+
+        if (!client) {
+            client = window.supabase.createClient(
+                "https://arlhkjocegnppfziikpo.supabase.co",
+                "sb_publishable_aWWQyhe1KrXskToB9nU2_A_SsFpUPbv"
+            );
+
+            client.auth.onAuthStateChange(function (event) {
+                if (event === "SIGNED_OUT") {
+                    results.replaceChildren();
+                    window.location.replace("login.html");
+                }
+            });
+        }
+
+        const { data, error } = await withTimeout(client.auth.getUser());
+
+        if (error) throw error;
+
+        if (!data.user) {
+            window.location.replace("login.html");
+            return false;
+        }
+
+        userId = data.user.id;
+        return true;
+    }
+
+    function showPlayer(profile) {
+        const card = document.createElement("article");
+        card.className = "player";
+
+        const gamerName = profile.gamer_name || "Gamer";
+        const initials = Array.from(gamerName).slice(0, 2).join("").toUpperCase();
+
+        const avatar = textElement("div", initials, "avatar");
+        avatar.setAttribute("aria-hidden", "true");
+
+        card.append(
+            avatar,
+            textElement("h2", gamerName),
+            textElement("p", profile.country + " • " + profile.language)
+        );
+
+        if (profile.bio) {
+            card.append(textElement("p", profile.bio));
+        }
+
+        const ranks = document.createElement("div");
+        ranks.className = "ranks";
+
+        Object.entries(profile.game_ranks || {}).forEach(function ([game, rank]) {
+            if (!filters.game || game === filters.game) {
+                ranks.append(
+                    textElement("span", game + " · " + rank, "rank")
+                );
+            }
+        });
+
+        card.append(ranks);
+        results.append(card);
+    }
+
+    async function searchPlayers(requestedPage) {
+        if (busy) return;
+
+        busy = true;
+        fields.disabled = true;
+        pagination.hidden = true;
+        results.replaceChildren();
+        status.textContent = "Searching for teammates…";
+
+        let controller;
+        let timer;
+
+        try {
+            if (!await ensureUser()) return;
+
+            controller = new AbortController();
+            timer = setTimeout(function () {
+                controller.abort();
+            }, 15000);
+
+            let query = client
+                .from("profiles")
+                .select(
+                    "id, gamer_name, country, language, bio, game_ranks",
+                    { count: "exact" }
+                )
+                .neq("id", userId);
+
+            if (filters.name) {
+                query = query.ilike("gamer_name", containsText(filters.name));
+            }
+
+            if (filters.country) {
+                query = query.ilike("country", containsText(filters.country));
+            }
+
+            if (filters.language === "English" || filters.language === "French") {
+                query = query.in(
+                    "language",
+                    [filters.language, "English and French"]
+                );
+            } else if (filters.language) {
+                query = query.eq("language", filters.language);
+            }
+
+            if (filters.game) {
+                const rankColumn = "game_ranks->>" + filters.game;
+                query = query.not(rankColumn, "is", null);
+
+                if (filters.rank) {
+                    query = query.ilike(
+                        rankColumn,
+                        containsText(filters.rank)
+                    );
+                }
+            }
+
+            const start = requestedPage * pageSize;
+
+            const { data, error, count } = await query
+                .order("gamer_name", { ascending: true })
+                .order("id", { ascending: true })
+                .range(start, start + pageSize - 1)
+                .abortSignal(controller.signal);
+
+            if (error) throw error;
+
+            page = requestedPage;
+            const total = count || 0;
+
+            if (!data || data.length === 0) {
+                status.textContent =
+                    "No other players found. Try fewer filters, or ask a friend " +
+                    "to sign up and complete their gamer profile.";
+            } else {
+                data.forEach(showPlayer);
+                status.textContent =
+                    "Showing " + (start + 1) + "–" +
+                    (start + data.length) + " of " + total + " players.";
+            }
+
+            previous.disabled = page === 0;
+            next.disabled = start + pageSize >= total;
+
+            document.getElementById("page-label").textContent =
+                "Page " + (page + 1);
+
+            pagination.hidden = total <= pageSize && page === 0;
+        } catch (error) {
+            status.textContent = controller && controller.signal.aborted
+                ? "The search took too long. Click Find Teammates to retry."
+                : "Could not search: " + error.message;
+        } finally {
+            clearTimeout(timer);
+            fields.disabled = false;
+            updateRankInput();
+            busy = false;
+        }
+    }
+
+    gameInput.addEventListener("change", function () {
+        rankInput.value = "";
+        updateRankInput();
+    });
+
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        filters = readFilters();
+        searchPlayers(0);
+    });
+
+    document.getElementById("clear").addEventListener("click", function () {
+        form.reset();
+        updateRankInput();
+        filters = readFilters();
+        searchPlayers(0);
+    });
+
+    previous.addEventListener("click", function () {
+        if (page > 0) searchPlayers(page - 1);
+    });
+
+    next.addEventListener("click", function () {
+        searchPlayers(page + 1);
+    });
+
+    filters = readFilters();
+    searchPlayers(0);
+})();
+</script>
+
+</body>
+</html>
