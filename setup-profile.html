@@ -239,15 +239,33 @@
 </footer>
 
 <script>
-    document.querySelectorAll("[data-game]").forEach(function (checkbox) {
-        checkbox.addEventListener("change", function () {
-            const rankInput = checkbox
-                .closest(".game-choice")
-                .querySelector('input[type="text"]');
+   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-            rankInput.hidden = !checkbox.checked;
-            rankInput.disabled = !checkbox.checked;
-            rankInput.required = checkbox.checked;
+<script>
+(async function () {
+    const form = document.getElementById("profile-form");
+    const saveButton = document.getElementById("save-profile-button");
+    const status = document.getElementById("profile-status");
+    const gameCheckboxes = document.querySelectorAll("[data-game]");
+
+    let currentUser = null;
+    let profileClient = null;
+
+    function updateRankField(checkbox) {
+        const rankInput = checkbox
+            .closest(".game-choice")
+            .querySelector('input[type="text"]');
+
+        rankInput.hidden = !checkbox.checked;
+        rankInput.disabled = !checkbox.checked;
+        rankInput.required = checkbox.checked;
+
+        return rankInput;
+    }
+
+    gameCheckboxes.forEach(function (checkbox) {
+        checkbox.addEventListener("change", function () {
+            const rankInput = updateRankField(checkbox);
 
             if (checkbox.checked) {
                 rankInput.focus();
@@ -255,12 +273,143 @@
         });
     });
 
-    document.getElementById("profile-form").addEventListener(
-        "submit",
-        function (event) {
-            event.preventDefault();
+    form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        if (!currentUser || !profileClient) {
+            status.textContent = "Please refresh the page and log in.";
+            return;
         }
-    );
+
+        const gamerName = document.getElementById("gamer-name").value.trim();
+        const country = document.getElementById("country").value.trim();
+        const language = document.getElementById("language").value;
+        const bio = document.getElementById("bio").value.trim();
+
+        if (!gamerName || !country || !language) {
+            status.textContent =
+                "Please enter your gamer name, country and language.";
+            return;
+        }
+
+        const gameRanks = {};
+
+        for (const checkbox of gameCheckboxes) {
+            if (checkbox.checked) {
+                const rankInput = checkbox
+                    .closest(".game-choice")
+                    .querySelector('input[type="text"]');
+
+                const rank = rankInput.value.trim();
+
+                if (!rank) {
+                    status.textContent =
+                        "Enter your rank or experience for " +
+                        checkbox.dataset.game + ".";
+                    rankInput.focus();
+                    return;
+                }
+
+                gameRanks[checkbox.dataset.game] = rank;
+            }
+        }
+
+        if (Object.keys(gameRanks).length === 0) {
+            status.textContent = "Please select at least one game.";
+            return;
+        }
+
+        saveButton.disabled = true;
+        saveButton.textContent = "Saving…";
+        status.textContent = "";
+
+        try {
+            const { error } = await profileClient
+                .from("profiles")
+                .upsert({
+                    id: currentUser.id,
+                    gamer_name: gamerName,
+                    country: country,
+                    language: language,
+                    bio: bio,
+                    game_ranks: gameRanks
+                }, {
+                    onConflict: "id"
+                });
+
+            if (error) {
+                throw error;
+            }
+
+            status.textContent = "Profile saved! Opening your dashboard…";
+            window.location.replace("dashboard.html");
+        } catch (error) {
+            status.textContent =
+                "Could not save your profile: " + error.message;
+            saveButton.disabled = false;
+            saveButton.textContent = "Save & Continue →";
+        }
+    });
+
+    status.textContent = "Loading your profile…";
+
+    try {
+        if (!window.supabase) {
+            throw new Error("Connection failed. Please refresh the page.");
+        }
+
+        profileClient = window.supabase.createClient(
+            "https://arlhkjocegnppfziikpo.supabase.co",
+            "sb_publishable_aWWQyhe1KrXskToB9nU2_A_SsFpUPbv"
+        );
+
+        const { data: authData, error: authError } =
+            await profileClient.auth.getUser();
+
+        if (authError || !authData.user) {
+            window.location.replace("login.html");
+            return;
+        }
+
+        currentUser = authData.user;
+
+        const { data: profile, error: profileError } = await profileClient
+            .from("profiles")
+            .select("gamer_name, country, language, bio, game_ranks")
+            .eq("id", currentUser.id)
+            .maybeSingle();
+
+        if (profileError) {
+            throw profileError;
+        }
+
+        document.getElementById("gamer-name").value =
+            profile?.gamer_name || currentUser.user_metadata?.username || "";
+
+        if (profile) {
+            document.getElementById("country").value = profile.country;
+            document.getElementById("language").value = profile.language;
+            document.getElementById("bio").value = profile.bio || "";
+
+            gameCheckboxes.forEach(function (checkbox) {
+                const rank = profile.game_ranks?.[checkbox.dataset.game];
+
+                checkbox.checked = typeof rank === "string";
+
+                const rankInput = updateRankField(checkbox);
+                rankInput.value = checkbox.checked ? rank : "";
+            });
+        }
+
+        status.textContent =
+            "Select your games and enter your ranks, then save.";
+        saveButton.disabled = false;
+    } catch (error) {
+        status.textContent =
+            "Could not load your profile: " + error.message;
+    }
+})();
+</script>
 </script>
 
 </body>
