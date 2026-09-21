@@ -143,3 +143,44 @@ if (resetForm) {
         }
     });
 }
+const welcomeMessage = document.getElementById("welcome-message");
+const logoutButton = document.getElementById("logout-button");
+
+if (welcomeMessage) {
+    supabaseClient.auth.getUser().then(function ({ data, error }) {
+        if (error || !data.user) {
+            window.location.replace("login.html");
+            return;
+        }
+
+        const username =
+            data.user.user_metadata?.username || "Gamer";
+
+        welcomeMessage.textContent =
+            "Welcome, " + username + "! Your squad is waiting.";
+    }).catch(function () {
+        welcomeMessage.textContent =
+            "Unable to load your account. Please refresh the page.";
+    });
+}
+
+if (logoutButton) {
+    logoutButton.addEventListener("click", async function () {
+        logoutButton.disabled = true;
+
+        try {
+            const { error } = await supabaseClient.auth.signOut();
+
+            if (error) {
+                alert("Logout failed: " + error.message);
+                return;
+            }
+
+            window.location.replace("login.html");
+        } catch (error) {
+            alert("Unable to log out. Check your connection and try again.");
+        } finally {
+            logoutButton.disabled = false;
+        }
+    });
+}
