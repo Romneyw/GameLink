@@ -5,6 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameLink | Dashboard</title>
     <link rel="stylesheet" href="style.css">
+
+    <style>
+        .dashboard-content {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 24px;
+        }
+
+        .dashboard-panel {
+            background: #101119;
+            border: 1px solid #34343e;
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+
+        .dashboard-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .dashboard-actions a {
+            color: #ff174f;
+        }
+
+        .player-games {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .player-game {
+            background: #06070d;
+            border: 1px solid #34343e;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .player-game h3 {
+            margin-bottom: 12px;
+        }
+
+        .player-game p,
+        .dashboard-note {
+            color: #aaa;
+            line-height: 1.6;
+        }
+
+        #profile-bio {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -14,28 +74,59 @@
         <div class="logo">🎮 <span>Game</span>Link</div>
 
         <div class="nav-buttons">
-            <button class="login" id="logout-button">Logout</button>
+            <button type="button" class="login" id="logout-button">
+                Logout
+            </button>
         </div>
     </nav>
 </header>
 
-<section class="auth-section">
-    <div class="auth-box">
-        <p class="tag">PLAYER DASHBOARD</p>
+<main class="dashboard-content">
+    <p id="dashboard-status" role="status">
+        Checking your account…
+    </p>
 
-        <h1>Welcome to GameLink</h1>
+    <button
+        type="button"
+        class="login"
+        id="dashboard-retry"
+        hidden
+    >
+        Try Again
+    </button>
 
-        <p class="auth-text" id="welcome-message">
-            Loading your player account...
-        </p>
-<p class="auth-switch">
-    <a href="setup-profile.html">🎮 Set Up / Edit Gamer Profile →</a>
-</p>
-        <a href="index.html" class="main-button">
-            Explore GameLink →
-        </a>
+    <div id="dashboard-details" hidden>
+        <section class="dashboard-panel">
+            <p class="tag">PLAYER DASHBOARD</p>
+            <h1 id="welcome-message">Welcome to GameLink</h1>
+
+            <p id="profile-location" class="dashboard-note"></p>
+            <p id="profile-bio" class="dashboard-note"></p>
+
+            <div class="dashboard-actions">
+                <a href="setup-profile.html">Edit My Gamer Profile →</a>
+                <a href="#my-games">My Games & Ranks ↓</a>
+            </div>
+        </section>
+
+        <section id="my-games" class="dashboard-panel">
+            <h2>My Games & Ranks</h2>
+
+            <p class="dashboard-note">
+                These ranks are entered by you and are not verified.
+            </p>
+
+            <div id="player-games" class="player-games"></div>
+        </section>
+
+        <section class="dashboard-panel">
+            <h2>Find Your Squad</h2>
+            <p class="dashboard-note">
+                Teammate search, game rooms and tournaments are coming next.
+            </p>
+        </section>
     </div>
-</section>
+</main>
 
 <footer>
     <div class="logo">🎮 <span>Game</span>Link</div>
@@ -43,7 +134,7 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="script.js?v=4"></script>
+<script src="script.js?v=8"></script>
 
 </body>
 </html>
