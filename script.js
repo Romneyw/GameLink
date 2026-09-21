@@ -32,8 +32,9 @@ if (signupForm) {
             return;
         }
 
-        alert("Account created! Check your email to verify your account.");
-        signupForm.reset();
+       alert("Account created! Welcome to GameLink.");
+signupForm.reset();
+window.location.href = "dashboard.html";
     });
 }
 const loginForm = document.getElementById("login-form");
