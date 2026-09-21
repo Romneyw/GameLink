@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameLink | Set Up Your Profile</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .profile-box {
+            width: 100%;
+            max-width: 650px;
+        }
+
+        .profile-box select,
+        .profile-box textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 14px;
+            margin-bottom: 20px;
+            background: #06070d;
+            color: white;
+            border: 1px solid #34343e;
+            border-radius: 10px;
+            font: inherit;
+        }
+
+        .profile-box textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .game-choice {
+            margin-bottom: 14px;
+            padding: 15px;
+            border: 1px solid #34343e;
+            border-radius: 10px;
+        }
+
+        .game-choice label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .game-choice input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin: 0;
+            accent-color: #ff174f;
+        }
+
+        .game-choice input[type="text"] {
+            margin-top: 14px;
+            margin-bottom: 0;
+        }
+
+        .profile-help {
+            color: #aaa;
+            margin: 12px 0 20px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <nav>
+        <div class="logo">🎮 <span>Game</span>Link</div>
+    </nav>
+</header>
+
+<section class="auth-section">
+    <div class="auth-box profile-box">
+        <p class="tag">YOUR GAMING IDENTITY</p>
+        <h1>Set Up Your Profile</h1>
+
+        <p class="auth-text">
+            Tell other gamers what you play and find your squad.
+        </p>
+
+        <form id="profile-form">
+            <label for="gamer-name">Gamer name</label>
+            <input
+                type="text"
+                id="gamer-name"
+                placeholder="Your gamer name"
+                maxlength="40"
+                required
+            >
+
+            <label for="country">Country</label>
+            <input
+                type="text"
+                id="country"
+                placeholder="For example: Cameroon"
+                autocomplete="country-name"
+                maxlength="100"
+                required
+            >
+
+            <label for="language">Preferred language</label>
+            <select id="language" required>
+                <option value="">Choose a language</option>
+                <option value="English">English</option>
+                <option value="French">French</option>
+                <option value="English and French">English and French</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <h2>Your Games & Ranks</h2>
+            <p class="profile-help">
+                Select the games you play, then enter your current rank.
+                If you do not play ranked matches, enter “Unranked”.
+            </p>
+
+            <div class="game-choice">
+                <label>
+                    <input type="checkbox" data-game="Blood Strike">
+                    Blood Strike
+                </label>
+                <input
+                    type="text"
+                    aria-label="Blood Strike rank"
+                    placeholder="Your Blood Strike rank"
+                    maxlength="60"
+                    hidden
+                    disabled
+                >
+            </div>
+
+            <div class="game-choice">
+                <label>
+                    <input type="checkbox" data-game="Brawlhalla">
+                    Brawlhalla
+                </label>
+                <input
+                    type="text"
+                    aria-label="Brawlhalla rank"
+                    placeholder="Your Brawlhalla rank"
+                    maxlength="60"
+                    hidden
+                    disabled
+                >
+            </div>
+
+            <div class="game-choice">
+                <label>
+                    <input type="checkbox" data-game="Free Fire">
+                    Free Fire
+                </label>
+                <input
+                    type="text"
+                    aria-label="Free Fire rank"
+                    placeholder="Your Free Fire rank"
+                    maxlength="60"
+                    hidden
+                    disabled
+                >
+            </div>
+
+            <div class="game-choice">
+                <label>
+                    <input type="checkbox" data-game="Fortnite">
+                    Fortnite
+                </label>
+                <input
+                    type="text"
+                    aria-label="Fortnite rank"
+                    placeholder="Your Fortnite rank"
+                    maxlength="60"
+                    hidden
+                    disabled
+                >
+            </div>
+
+            <div class="game-choice">
+                <label>
+                    <input type="checkbox" data-game="Minecraft">
+                    Minecraft
+                </label>
+                <input
+                    type="text"
+                    aria-label="Minecraft experience level"
+                    placeholder="Experience: Beginner, Intermediate or Advanced"
+                    maxlength="60"
+                    hidden
+                    disabled
+                >
+            </div>
+
+            <div class="game-choice">
+                <label>
+                    <input type="checkbox" data-game="Call of Duty Mobile">
+                    Call of Duty Mobile
+                </label>
+                <input
+                    type="text"
+                    aria-label="Call of Duty Mobile rank"
+                    placeholder="Your Call of Duty Mobile rank"
+                    maxlength="60"
+                    hidden
+                    disabled
+                >
+            </div>
+
+            <p class="profile-help">
+                Ranks are entered by players and are not verified.
+            </p>
+
+            <label for="bio">About you — optional</label>
+            <textarea
+                id="bio"
+                maxlength="500"
+                placeholder="What kind of teammates are you looking for?"
+            ></textarea>
+
+            <button
+                type="submit"
+                class="main-button"
+                id="save-profile-button"
+                disabled
+            >
+                Save & Continue →
+            </button>
+
+            <p id="profile-status" class="profile-help" role="status">
+                Profile saving will be connected in the next step.
+            </p>
+        </form>
+    </div>
+</section>
+
+<footer>
+    <div class="logo">🎮 <span>Game</span>Link</div>
+    <p>Find your squad. Play together.</p>
+</footer>
+
+<script>
+    document.querySelectorAll("[data-game]").forEach(function (checkbox) {
+        checkbox.addEventListener("change", function () {
+            const rankInput = checkbox
+                .closest(".game-choice")
+                .querySelector('input[type="text"]');
+
+            rankInput.hidden = !checkbox.checked;
+            rankInput.disabled = !checkbox.checked;
+            rankInput.required = checkbox.checked;
+
+            if (checkbox.checked) {
+                rankInput.focus();
+            }
+        });
+    });
+
+    document.getElementById("profile-form").addEventListener(
+        "submit",
+        function (event) {
+            event.preventDefault();
+        }
+    );
+</script>
+
+</body>
+</html>
