@@ -198,6 +198,9 @@
             margin-top: 18px;
         }
 
+        .chat-link { display: inline-block; margin-top: 20px; padding: 12px 18px; border-radius: 10px; background: #ff174f; color: white; text-decoration: none; font-weight: 700; }
+        .nav-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
         .rank {
             background: #ff174f12;
             color: #ffb4c8;
@@ -228,7 +231,10 @@
         <a href="dashboard.html" class="logo">
             🎮 <span>Game</span>Link
         </a>
-        <a href="dashboard.html" class="back">← My Dashboard</a>
+        <div class="nav-actions">
+            <a href="chat.html" class="back">Messages</a>
+            <a href="dashboard.html" class="back">← My Dashboard</a>
+        </div>
     </nav>
 </header>
 
@@ -317,7 +323,7 @@
 
     <p class="muted">
         Ranks are player-entered and not verified.
-        Messaging and squad invitations are coming later.
+        Choose Chat on a player card to start a private conversation.
     </p>
 </main>
 
@@ -461,7 +467,10 @@
             }
         });
 
-        card.append(ranks);
+        const chatLink = textElement("a", "Chat →", "chat-link");
+        chatLink.href = "chat.html?player=" + encodeURIComponent(profile.id);
+        chatLink.setAttribute("aria-label", "Chat with " + gamerName);
+        card.append(ranks, chatLink);
         results.append(card);
     }
 
