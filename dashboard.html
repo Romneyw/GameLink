@@ -7,67 +7,390 @@
     <link rel="stylesheet" href="style.css">
 
     <style>
-        .dashboard-content {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 24px;
+        body.gamer-dashboard {
+            margin: 0;
+            background: #06070d;
+            color: #f5f5fa;
+            font-family: Arial, sans-serif;
         }
 
-        .dashboard-panel {
-            background: #101119;
-            border: 1px solid #34343e;
-            border-radius: 20px;
-            padding: 28px;
-            margin-bottom: 24px;
+        .gamer-dashboard * {
+            box-sizing: border-box;
+        }
+
+        .gamer-dashboard [hidden] {
+            display: none !important;
+        }
+
+        .gamer-dashboard header {
+            background: rgba(6, 7, 13, 0.96);
+            border-bottom: 1px solid #222431;
+        }
+
+        .gamer-dashboard nav {
+            max-width: 1100px;
+            margin: auto;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .gamer-dashboard .logo {
+            font-size: 25px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .gamer-dashboard .logo span {
+            color: #ff174f;
+        }
+
+        .gamer-dashboard .nav-buttons {
+            display: flex;
+            align-items: center;
+        }
+
+        .gamer-dashboard .login {
+            border: 1px solid #383a49;
+            border-radius: 12px;
+            background: #12131d;
+            color: #fff;
+            padding: 12px 18px;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .gamer-dashboard .login:hover {
+            border-color: #ff174f;
+        }
+
+        .gamer-dashboard button:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        .dashboard-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 32px 24px 60px;
+        }
+
+        #dashboard-status {
+            color: #b8bac9;
+            line-height: 1.6;
+        }
+
+        #dashboard-status:empty {
+            display: none;
+        }
+
+        .profile-banner {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #383041;
+            border-radius: 24px;
+            background:
+                radial-gradient(
+                    ellipse at top right,
+                    rgba(255, 23, 79, 0.22),
+                    transparent 65%
+                ),
+                linear-gradient(135deg, #181522, #10121d);
+            padding: 38px;
+            margin-bottom: 30px;
+        }
+
+        .profile-banner::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 38px;
+            width: 90px;
+            height: 4px;
+            background: #ff174f;
+            border-radius: 0 0 6px 6px;
+        }
+
+        .profile-topline {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 26px;
+        }
+
+        .gamer-avatar {
+            width: 76px;
+            height: 76px;
+            flex-shrink: 0;
+            display: grid;
+            place-items: center;
+            border-radius: 22px;
+            border: 1px solid #ff47754d;
+            background: linear-gradient(145deg, #482037, #1e172b);
+            box-shadow: 0 12px 30px #00000033;
+            font-size: 36px;
+        }
+
+        .dashboard-eyebrow {
+            margin: 0 0 9px;
+            color: #ff6387;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+        }
+
+        .dashboard-subtitle {
+            margin: 0;
+            color: #bab8c9;
+            font-size: 14px;
+        }
+
+        .gamer-dashboard #welcome-message {
+            margin: 0 0 16px;
+            font-size: clamp(28px, 5vw, 46px);
+            line-height: 1.15;
+            letter-spacing: -1.4px;
+            overflow-wrap: anywhere;
+        }
+
+        #profile-location {
+            display: inline-block;
+            margin: 0 0 18px;
+            padding: 9px 14px;
+            background: #ffffff08;
+            border: 1px solid #ffffff12;
+            border-radius: 30px;
+            color: #d8d5e4;
+            font-size: 13px;
+        }
+
+        #profile-bio {
+            max-width: 650px;
+            margin: 0;
+            color: #aaaabb;
+            font-size: 15px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        #profile-bio:empty {
+            display: none;
         }
 
         .dashboard-actions {
             display: flex;
             flex-wrap: wrap;
-            gap: 16px;
-            margin-top: 24px;
+            gap: 12px;
+            margin-top: 28px;
         }
 
         .dashboard-actions a {
-            color: #ff174f;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 46px;
+            padding: 13px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .dashboard-actions .edit-profile {
+            color: white;
+            background: #ff174f;
+            box-shadow: 0 8px 24px #ff174f26;
+        }
+
+        .dashboard-actions .view-games {
+            color: #e5e3ef;
+            background: #ffffff08;
+            border: 1px solid #ffffff1f;
+        }
+
+        .dashboard-actions a:hover {
+            transform: translateY(-2px);
+        }
+
+        .games-heading {
+            margin-bottom: 20px;
+        }
+
+        .gamer-dashboard .games-heading h2 {
+            margin: 0 0 10px;
+            font-size: 27px;
+            letter-spacing: -0.7px;
+        }
+
+        .dashboard-note {
+            margin: 0;
+            color: #999cad;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        #my-games {
+            scroll-margin-top: 100px;
         }
 
         .player-games {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-top: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 18px;
         }
 
         .player-game {
-            background: #06070d;
-            border: 1px solid #34343e;
-            border-radius: 12px;
-            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            padding: 26px;
+            min-height: 180px;
+            border: 1px solid #2b2939;
+            border-radius: 18px;
+            background:
+                radial-gradient(
+                    circle at top right,
+                    #ff174f16,
+                    transparent 70%
+                ),
+                #11131e;
+            transition: transform 0.2s, border-color 0.2s;
         }
 
-        .player-game h3 {
-            margin-bottom: 12px;
+        .player-game::before {
+            content: "SELECTED GAME";
+            display: block;
+            margin-bottom: 22px;
+            color: #ff6387;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 2px;
         }
 
-        .player-game p,
-        .dashboard-note {
-            color: #aaa;
-            line-height: 1.6;
+        .player-game:hover {
+            transform: translateY(-4px);
+            border-color: #ff174f80;
         }
 
-        #profile-bio {
-            white-space: pre-wrap;
+        .gamer-dashboard .player-game h3 {
+            margin: 0 0 16px;
+            font-size: 22px;
+            line-height: 1.3;
+            color: #f5f5fa;
             overflow-wrap: anywhere;
         }
 
-        [hidden] {
-            display: none !important;
+        .gamer-dashboard .player-game p {
+            display: inline-block;
+            margin: 0;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: #ff174f12;
+            border: 1px solid #ff174f26;
+            color: #ffb8ca;
+            font-size: 13px;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+        }
+
+        .next-chapter {
+            margin-top: 30px;
+            padding: 26px;
+            border: 1px dashed #353443;
+            border-radius: 18px;
+            background: #0d0f17;
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+        }
+
+        .squad-symbol {
+            font-size: 30px;
+            flex-shrink: 0;
+        }
+
+        .gamer-dashboard .next-chapter h2 {
+            margin: 0 0 8px;
+            font-size: 20px;
+        }
+
+        .coming-soon {
+            display: inline-block;
+            margin-top: 14px;
+            color: #a6a4b6;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .gamer-dashboard footer {
+            border-top: 1px solid #20222e;
+            padding: 28px 24px;
+            text-align: center;
+            background: #080910;
+        }
+
+        .gamer-dashboard footer p {
+            margin-top: 10px;
+            color: #777b8f;
+            font-size: 13px;
+        }
+
+        .gamer-dashboard a:focus-visible,
+        .gamer-dashboard button:focus-visible {
+            outline: 3px solid #ff94ae;
+            outline-offset: 4px;
+        }
+
+        @media (max-width: 600px) {
+            .dashboard-content {
+                padding: 22px 16px 40px;
+            }
+
+            .profile-banner {
+                padding: 26px 22px;
+            }
+
+            .profile-topline {
+                gap: 14px;
+            }
+
+            .gamer-avatar {
+                width: 60px;
+                height: 60px;
+                border-radius: 18px;
+                font-size: 30px;
+            }
+
+            .dashboard-actions a {
+                flex: 1 1 160px;
+            }
+
+            .player-games {
+                grid-template-columns: 1fr;
+            }
+
+            .next-chapter {
+                padding: 22px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .dashboard-actions a,
+            .player-game {
+                transition: none;
+            }
         }
     </style>
 </head>
 
-<body>
+<body class="gamer-dashboard">
 
 <header>
     <nav>
@@ -82,6 +405,7 @@
 </header>
 
 <main class="dashboard-content">
+
     <p id="dashboard-status" role="status">
         Checking your account…
     </p>
@@ -96,35 +420,66 @@
     </button>
 
     <div id="dashboard-details" hidden>
-        <section class="dashboard-panel">
-            <p class="tag">PLAYER DASHBOARD</p>
+
+        <section class="profile-banner">
+            <div class="profile-topline">
+                <div class="gamer-avatar" aria-hidden="true">🎮</div>
+
+                <div>
+                    <p class="dashboard-eyebrow">Your Player Hub</p>
+                    <p class="dashboard-subtitle">
+                        Your games. Your ranks. Your identity.
+                    </p>
+                </div>
+            </div>
+
             <h1 id="welcome-message">Welcome to GameLink</h1>
 
-            <p id="profile-location" class="dashboard-note"></p>
-            <p id="profile-bio" class="dashboard-note"></p>
+            <p id="profile-location"></p>
+            <p id="profile-bio"></p>
 
             <div class="dashboard-actions">
-                <a href="setup-profile.html">Edit My Gamer Profile →</a>
-                <a href="#my-games">My Games & Ranks ↓</a>
+                <a href="setup-profile.html" class="edit-profile">
+                    Edit My Profile →
+                </a>
+
+                <a href="#my-games" class="view-games">
+                    My Games & Ranks ↓
+                </a>
             </div>
         </section>
 
-        <section id="my-games" class="dashboard-panel">
-            <h2>My Games & Ranks</h2>
+        <section id="my-games">
+            <div class="games-heading">
+                <p class="dashboard-eyebrow">Your Lineup</p>
+                <h2>Games you play</h2>
 
-            <p class="dashboard-note">
-                These ranks are entered by you and are not verified.
-            </p>
+                <p class="dashboard-note">
+                    Your selected games and player-entered ranks.
+                    Ranks are not verified.
+                </p>
+            </div>
 
             <div id="player-games" class="player-games"></div>
         </section>
 
-        <section class="dashboard-panel">
-            <h2>Find Your Squad</h2>
-            <p class="dashboard-note">
-                Teammate search, game rooms and tournaments are coming next.
-            </p>
+        <section class="next-chapter">
+            <div class="squad-symbol" aria-hidden="true">👥</div>
+
+            <div>
+                <h2>Your next squad starts here</h2>
+
+                <p class="dashboard-note">
+                    Find players who share your games, team up,
+                    and take on your next challenge together.
+                </p>
+
+                <span class="coming-soon">
+                    Teammate search · Coming soon
+                </span>
+            </div>
         </section>
+
     </div>
 </main>
 
