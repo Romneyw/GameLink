@@ -272,11 +272,16 @@
                         <option>Fortnite</option>
                         <option>Minecraft</option>
                         <option>Call of Duty Mobile</option>
+                        <option value="FC Mobile">FC Mobile</option>
+                        <option value="Dream League Soccer">Dream League Soccer (DLS)</option>
+                        <option value="eFootball">eFootball</option>
+                        <option value="PUBG Mobile">PUBG Mobile</option>
+                        <option value="Roblox">Roblox</option>
                     </select>
                 </div>
 
                 <div>
-                    <label for="rank">Rank / experience</label>
+                    <label for="rank">Rank / division / experience</label>
                     <input
                         id="rank"
                         placeholder="Choose a game first"
@@ -357,8 +362,15 @@
 
     function updateRankInput() {
         rankInput.disabled = !gameInput.value;
+        const gameHints = {
+            "FC Mobile": "Search a rank or division",
+            "Dream League Soccer": "Search a division",
+            "eFootball": "Search a division",
+            "Minecraft": "Beginner, Intermediate or Advanced",
+            "Roblox": "Beginner, Intermediate or Advanced"
+        };
         rankInput.placeholder = gameInput.value
-            ? "For example: Gold or Unranked"
+            ? (gameHints[gameInput.value] || "For example: Gold or Unranked")
             : "Choose a game first";
 
         if (!gameInput.value) rankInput.value = "";
