@@ -110,10 +110,11 @@
                 <option value="Other">Other</option>
             </select>
 
-            <h2>Your Games & Ranks</h2>
+            <h2>Your Games & Ranks / Experience</h2>
             <p class="profile-help">
-                Select the games you play, then enter your current rank.
-                If you do not play ranked matches, enter “Unranked”.
+                Select your games and enter your rank, division or experience level.
+                For football games, include your mode if needed. For Minecraft and Roblox,
+                enter Beginner, Intermediate or Advanced. You can also enter “Unranked”.
             </p>
 
             <div class="game-choice">
@@ -206,6 +207,81 @@
                 >
             </div>
 
+            <div class="game-choice">
+                <label>
+                    <input type="checkbox" data-game="FC Mobile">
+                    FC Mobile
+                </label>
+                <input
+                    type="text"
+                    aria-label="FC Mobile rank or division"
+                    placeholder="Your rank or division (include the mode)"
+                    maxlength="60"
+                    hidden
+                    disabled
+                >
+            </div>
+
+            <div class="game-choice">
+                <label>
+                    <input type="checkbox" data-game="Dream League Soccer">
+                    Dream League Soccer (DLS)
+                </label>
+                <input
+                    type="text"
+                    aria-label="Dream League Soccer (DLS) division"
+                    placeholder="Your division (include Career or Dream League Live)"
+                    maxlength="60"
+                    hidden
+                    disabled
+                >
+            </div>
+
+            <div class="game-choice">
+                <label>
+                    <input type="checkbox" data-game="eFootball">
+                    eFootball
+                </label>
+                <input
+                    type="text"
+                    aria-label="eFootball division"
+                    placeholder="Your division, or Unranked"
+                    maxlength="60"
+                    hidden
+                    disabled
+                >
+            </div>
+
+            <div class="game-choice">
+                <label>
+                    <input type="checkbox" data-game="PUBG Mobile">
+                    PUBG Mobile
+                </label>
+                <input
+                    type="text"
+                    aria-label="PUBG Mobile rank"
+                    placeholder="Your PUBG Mobile rank, or Unranked"
+                    maxlength="60"
+                    hidden
+                    disabled
+                >
+            </div>
+
+            <div class="game-choice">
+                <label>
+                    <input type="checkbox" data-game="Roblox">
+                    Roblox
+                </label>
+                <input
+                    type="text"
+                    aria-label="Roblox experience level"
+                    placeholder="Experience: Beginner, Intermediate or Advanced"
+                    maxlength="60"
+                    hidden
+                    disabled
+                >
+            </div>
+
             <p class="profile-help">
                 Ranks are entered by players and are not verified.
             </p>
@@ -227,7 +303,7 @@
             </button>
 
             <p id="profile-status" class="profile-help" role="status">
-                Profile saving will be connected in the next step.
+                Loading your profile…
             </p>
         </form>
     </div>
@@ -401,7 +477,7 @@
         }
 
         status.textContent =
-            "Select your games and enter your ranks, then save.";
+            "Select your games and enter your rank, division or experience, then save.";
         saveButton.disabled = false;
     } catch (error) {
         status.textContent =
