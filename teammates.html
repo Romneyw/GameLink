@@ -201,6 +201,10 @@
         .chat-link { display: inline-block; margin-top: 20px; padding: 12px 18px; border-radius: 10px; background: #ff174f; color: white; text-decoration: none; font-weight: 700; }
         .nav-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
+        .ready-badge { display:inline-block; padding:9px 12px; margin-top:12px; border:1px solid #459663; border-radius:20px; color:#a6f2c2; background:#163424; font-size:13px; }
+        .ready-filter { display:flex; gap:10px; align-items:center; margin-top:20px; }
+        .ready-filter input { width:20px; min-height:20px; height:20px; accent-color:#43cf7b; }
+
         .rank {
             background: #ff174f12;
             color: #ffb4c8;
@@ -302,6 +306,7 @@
                 </div>
             </div>
 
+            <label class="ready-filter"><input type="checkbox" id="ready-only">Ready to play now only</label>
             <div class="actions">
                 <button type="submit" class="primary">Find Teammates →</button>
                 <button type="button" id="clear">Clear Filters</button>
@@ -341,6 +346,8 @@
     const previous = document.getElementById("previous");
     const next = document.getElementById("next");
 
+    const readyInput = document.getElementById("ready-only");
+    readyInput.checked = new URLSearchParams(location.search).get("ready") === "1";
     const pageSize = 12;
     let page = 0;
     let userId = null;
@@ -359,6 +366,7 @@
 
     function readFilters() {
         return {
+            ready: readyInput.checked,
             name: document.getElementById("name").value.trim(),
             game: gameInput.value,
             rank: rankInput.value.trim(),
@@ -456,6 +464,11 @@
             card.append(textElement("p", profile.bio));
         }
 
+        if (profile.ready_game) {
+            card.append(textElement("span", "● Ready to play · " + profile.ready_game, "ready-badge"));
+            card.dataset.readyExpiry = String(Date.now() + Math.max(0, Date.parse(profile.ready_until) - Date.parse(profile.server_now)));
+        }
+
         const ranks = document.createElement("div");
         ranks.className = "ranks";
 
@@ -495,12 +508,17 @@
             }, 15000);
 
             let query = client
-                .from("profiles")
+                .from("gamelink_search_profiles")
                 .select(
-                    "id, gamer_name, country, language, bio, game_ranks",
+                    "id, gamer_name, country, language, bio, game_ranks, ready_game, ready_until, server_now",
                     { count: "exact" }
                 )
                 .neq("id", userId);
+
+            if (filters.ready) {
+                query = query.not("ready_game", "is", null);
+                if (filters.game) query = query.eq("ready_game", filters.game);
+            }
 
             if (filters.name) {
                 query = query.ilike("gamer_name", containsText(filters.name));
@@ -565,7 +583,9 @@
         } catch (error) {
             status.textContent = controller && controller.signal.aborted
                 ? "The search took too long. Click Find Teammates to retry."
-                : "Could not search: " + error.message;
+                : ["PGRST205", "42P01", "42703"].includes(error.code)
+                    ? "Run ready-setup.sql in Supabase, then click Find Teammates."
+                    : "Could not search: " + error.message;
         } finally {
             clearTimeout(timer);
             fields.disabled = false;
@@ -600,6 +620,27 @@
         searchPlayers(page + 1);
     });
 
+    // Expire badges using elapsed time from the server response, not the phone clock.
+    setInterval(function () {
+        if (document.hidden) return;
+        let expired = false;
+        results.querySelectorAll("[data-ready-expiry]").forEach(function (card) {
+            if (Number(card.dataset.readyExpiry) <= Date.now()) {
+                const badge = card.querySelector(".ready-badge");
+                if (badge) badge.remove();
+                delete card.dataset.readyExpiry;
+                if (filters.ready) { card.remove(); expired = true; }
+            }
+        });
+        if (expired) status.textContent = "Some players’ availability expired. Search again to refresh the list.";
+    }, 1000);
+    // Refresh submitted filters; leave unfinished filter edits intact.
+    setInterval(function () {
+        if (!document.hidden && userId && !busy && !results.contains(document.activeElement)) searchPlayers(page);
+    }, 30000);
+    document.addEventListener("visibilitychange", function () {
+        if (!document.hidden && userId && !busy) searchPlayers(page);
+    });
     filters = readFilters();
     searchPlayers(0);
 })();
