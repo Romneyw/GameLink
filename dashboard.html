@@ -387,6 +387,17 @@
                 transition: none;
             }
         }
+
+        .ready-panel { margin-bottom:30px; padding:26px; border:1px solid #2e5447; border-radius:20px; background:linear-gradient(120deg,#14332a,#10121d); }
+        .ready-panel h2 { margin:0 0 12px; font-size:24px; }
+        .ready-panel label { display:block; margin:18px 0 8px; }
+        .ready-panel select { width:100%; max-width:430px; padding:13px; border:1px solid #55675e; border-radius:10px; background:#080f10; color:white; font:inherit; }
+        .ready-panel .ready-controls { display:flex; flex-wrap:wrap; align-items:center; gap:14px; margin-top:18px; }
+        .ready-panel #ready-toggle { padding:13px 20px; border:1px solid #547c66; border-radius:28px; background:#182720; color:white; font:inherit; font-weight:bold; cursor:pointer; }
+        .ready-panel #ready-toggle[aria-checked="true"] { background:#9df2bc; color:#062817; }
+        .ready-panel #ready-status { color:#c1e7d0; line-height:1.6; margin:14px 0 0; }
+        .ready-panel #ready-error { color:#ffb8ca; line-height:1.6; }
+        .ready-panel select:focus-visible { outline:3px solid #9df2bc; outline-offset:3px; }
     </style>
 </head>
 
@@ -446,7 +457,23 @@
                 <a href="teammates.html" class="view-games">
     Find Teammates →
 </a>
+                <a href="chat.html" class="view-games">Messages →</a>
             </div>
+        </section>
+
+        <section class="ready-panel" aria-labelledby="ready-heading">
+            <p class="dashboard-eyebrow">Find a match today</p>
+            <h2 id="ready-heading">Looking to play now?</h2>
+            <p class="dashboard-note">Choose a game, then turn on your availability. Other players can find you and send you a message. It turns off after one hour.</p>
+            <label for="ready-game">Which game?</label>
+            <select id="ready-game" disabled><option value="">Loading your games…</option></select>
+            <div class="ready-controls">
+                <button type="button" id="ready-toggle" role="switch" aria-checked="false" aria-label="Looking to play now" disabled>Off · Turn on</button>
+                <a href="teammates.html?ready=1" class="login">Find ready players →</a>
+            </div>
+            <p id="ready-status" role="status">Loading availability…</p>
+            <p id="ready-error" role="alert"></p>
+            <button type="button" id="ready-retry" class="login" hidden>Refresh availability</button>
         </section>
 
         <section id="my-games">
@@ -489,7 +516,127 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="script.js?v=8"></script>
+<!-- Dashboard code is contained here so this page uses one Supabase client. -->
+<script>
+(function () {
+    "use strict";
+    const $ = id => document.getElementById(id);
+    let client, user, profile, busy = false, loading = false, stopped = false;
+    let clockOffset = 0, availabilityKnown = false;
+    function node(tag, text) { const el = document.createElement(tag); el.textContent = text; return el; }
+    function errorText(error) {
+        if (["PGRST205","PGRST202","42703","42P01"].includes(error.code))
+            return "Run ready-setup.sql in Supabase, then refresh availability.";
+        return error.message || "Connection failed. Please try again.";
+    }
+    async function request(query) {
+        const c = new AbortController(), timer = setTimeout(() => c.abort(),15000);
+        try { const r = await query.abortSignal(c.signal); if (r.error) throw r.error; return r.data; }
+        catch(e) { if(c.signal.aborted) throw new Error("Connection took too long. Please try again."); throw e; }
+        finally {clearTimeout(timer);}
+    }
+    async function getUser() {
+        let timer;
+        try {
+            const r = await Promise.race([client.auth.getUser(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error("Account check took too long. Try again.")),15000);})]);
+            if (r.error?.name === "AuthSessionMissingError" || (!r.error && !r.data.user)) { location.replace("login.html"); return null; }
+            if(r.error) throw r.error;
+            return r.data.user;
+        } finally {clearTimeout(timer);}
+    }
+    function active() {return Boolean(profile?.ready_game && Date.parse(profile.ready_until) > Date.now()+clockOffset);}
+    function paintReady() {
+        const on = active();
+        $("ready-toggle").setAttribute("aria-checked",String(on));
+        $("ready-toggle").textContent = busy ? "Saving…" : on ? "On · Turn off" : "Off · Turn on";
+        $("ready-toggle").disabled = busy || !availabilityKnown || !$("ready-game").value;
+        $("ready-game").disabled = busy || on || !availabilityKnown;
+        if (!availabilityKnown) $("ready-status").textContent = "Availability could not be confirmed. Refresh to try again.";
+        else if (on) {
+            const minutes = Math.max(1,Math.ceil((Date.parse(profile.ready_until)-Date.now()-clockOffset)/60000));
+            $("ready-status").textContent = "Ready to play · " + profile.ready_game + " · Turns off in " + minutes + " min. Turn it off to change games.";
+        } else $("ready-status").textContent = "You are not listed as ready to play. Turn it on whenever you’re ready.";
+    }
+    async function refreshReady() {
+        const row = await request(client.from("gamelink_search_profiles").select("ready_game,ready_until,server_now").eq("id",user.id).single());
+        if(stopped) return;
+        clockOffset = Date.parse(row.server_now)-Date.now();
+        profile = {...profile,...row}; availabilityKnown = true;
+        if(active()) $("ready-game").value = profile.ready_game;
+        $("ready-error").textContent = ""; $("ready-retry").hidden = true;
+        paintReady();
+    }
+    async function load() {
+        if(loading || stopped) return;
+        loading = true; $("dashboard-retry").hidden = true;
+        $("dashboard-status").textContent = "Checking your account…";
+        try {
+            if(!window.supabase) throw new Error("GameLink could not load. Refresh this page.");
+            if(!client) {
+                client = window.supabase.createClient("https://arlhkjocegnppfziikpo.supabase.co","sb_publishable_aWWQyhe1KrXskToB9nU2_A_SsFpUPbv");
+                client.auth.onAuthStateChange(event=>{if(event === "SIGNED_OUT") {stopped=true; $("dashboard-details").hidden=true; location.replace("login.html");}});
+            }
+            user = await getUser(); if(!user || stopped) return;
+            profile = await request(client.from("profiles").select("gamer_name,country,language,bio,game_ranks").eq("id",user.id).maybeSingle());
+            if(stopped) return;
+            if(!profile?.gamer_name || !profile.country || !profile.language || !Object.keys(profile.game_ranks || {}).length) {location.replace("setup-profile.html"); return;}
+            $("welcome-message").textContent = "Welcome, " + profile.gamer_name + "!";
+            $("profile-location").textContent = profile.country + " • " + profile.language;
+            $("profile-bio").textContent = profile.bio || "";
+            $("player-games").replaceChildren(); $("ready-game").replaceChildren();
+            for(const [game,rank] of Object.entries(profile.game_ranks)) {
+                const card = node("article",""); card.className="player-game";
+                card.append(node("h3",game),node("p",(game==="Minecraft"?"Experience: ":"Rank: ")+rank));
+                $("player-games").append(card);
+                const option = node("option",game); option.value=game; $("ready-game").append(option);
+            }
+            $("dashboard-details").hidden = false; $("dashboard-status").textContent = "";
+            try {await refreshReady();}
+            catch(e) {availabilityKnown=false; $("ready-error").textContent=errorText(e); $("ready-retry").hidden=false; paintReady();}
+        } catch(e) {$("dashboard-status").textContent=errorText(e); $("dashboard-retry").hidden=false;}
+        finally {loading=false;}
+    }
+    $("ready-toggle").addEventListener("click",async()=>{
+        if(busy || !availabilityKnown || stopped) return;
+        const game = active() ? null : $("ready-game").value;
+        if(game === "") return;
+        busy=true; $("ready-error").textContent=""; paintReady();
+        try {
+            await request(client.rpc("gamelink_set_ready",{p_game:game}));
+            await refreshReady();
+        } catch(e) {
+            // A timeout may follow a successful save. Recheck before allowing another toggle.
+            availabilityKnown=false;
+            $("ready-error").textContent=errorText(e)+" Refresh availability to confirm whether it saved.";
+            $("ready-retry").hidden=false;
+        } finally {busy=false; paintReady();}
+    });
+    $("ready-game").addEventListener("change",paintReady);
+    $("ready-retry").addEventListener("click",async()=>{
+        if(busy) return; busy=true; $("ready-retry").disabled=true; paintReady();
+        try{await refreshReady();}catch(e){$("ready-error").textContent=errorText(e);}
+        finally{busy=false; $("ready-retry").disabled=false; paintReady();}
+    });
+    $("dashboard-retry").addEventListener("click",load);
+    $("logout-button").addEventListener("click",async()=>{
+        if(!client) {location.replace("login.html"); return;}
+        $("logout-button").disabled=true;
+        try {const r=await client.auth.signOut(); if(r.error) throw r.error; location.replace("login.html");}
+        catch(e){alert("Logout failed: "+errorText(e));}
+        finally{$("logout-button").disabled=false;}
+    });
+    setInterval(()=>{if(!document.hidden && profile && !stopped) paintReady();},1000);
+    document.addEventListener("visibilitychange",async()=>{
+        if(!document.hidden && user && !busy && !loading && !stopped) {
+            busy=true;
+            try {await refreshReady();}catch(e){availabilityKnown=false; $("ready-error").textContent=errorText(e); $("ready-retry").hidden=false;}
+            finally{busy=false; paintReady();}
+        }
+    });
+    void load();
+})();
+
+</script>
 
 </body>
 </html>
