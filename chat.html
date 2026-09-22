@@ -21,6 +21,19 @@ h1{font-size:32px;margin:10px 0}h2{font-size:21px;margin:0 0 8px}.muted{color:#a
 .controls{padding:12px 20px;display:flex;gap:10px;flex-wrap:wrap}.composer{padding:18px;border-top:1px solid #292b39}label{display:block;margin-bottom:9px;font-size:14px}textarea{display:block;width:100%;resize:vertical;min-height:90px;max-height:220px;padding:13px;background:#080a12;border:1px solid #343645;border-radius:10px;color:white;font:inherit}.send-row{display:flex;gap:12px;justify-content:space-between;align-items:center;margin-top:12px}.notice{padding:0 20px;color:#f4becd;font-size:14px;line-height:1.5}.pager{display:flex;gap:8px;margin-top:12px}
 a:focus-visible,button:focus-visible,textarea:focus-visible{outline:3px solid #ff8eac;outline-offset:3px}
 @media(max-width:720px){.layout{grid-template-columns:1fr}.threads{max-height:180px}.messages{height:45vh}.bubble{max-width:92%}main{padding:20px 12px}.nav-links{font-size:13px}}
+
+/* The inbox is a full page until a conversation is selected. */
+.layout[data-view="inbox"] { grid-template-columns:minmax(0,1fr); }
+.layout[data-view="inbox"] #conversation-panel { display:none; }
+.layout[data-view="inbox"] .threads { max-height:none; overflow:visible; }
+.inbox-heading { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+.thread .open-chat { display:block; margin-top:12px; color:#ff8eac; font-size:13px; font-weight:bold; }
+.thread:hover { border-color:#ff6387; }
+.back-messages { display:inline-block; margin-bottom:18px; }
+@media(max-width:720px) {
+    .layout[data-view="chat"] .inbox { display:none; }
+    .layout[data-view="chat"] { grid-template-columns:minmax(0,1fr); }
+}
 </style>
 </head>
 <body>
@@ -29,13 +42,13 @@ a:focus-visible,button:focus-visible,textarea:focus-visible{outline:3px solid #f
 <p class="tag">YOUR SQUAD STARTS WITH HELLO</p><h1>Messages</h1>
 <p class="muted">Plan your next match. Messages refresh automatically while this page is open.</p>
 <p id="account-status" role="status">Checking your account…</p><button id="retry-account" hidden>Try Again</button>
-<div class="layout" id="app" hidden>
-<aside class="panel inbox"><h2>Conversations</h2><p class="muted" id="inbox-status" role="status">Loading…</p><div class="threads" id="threads"></div><div class="pager"><button id="prev-inbox" hidden>← Newer</button><button id="next-inbox" hidden>Older →</button></div></aside>
-<section class="panel" aria-label="Private conversation">
-<div class="chat-head"><h2 id="chat-name">Choose a teammate</h2><p class="muted" id="chat-detail">Open a conversation or find a player to chat with.</p></div>
+<div class="layout" id="app" data-view="inbox" hidden>
+<aside class="panel inbox"><div class="inbox-heading"><h2>Your conversations</h2><button id="refresh-inbox" type="button">Refresh</button></div><p class="muted" id="inbox-status" role="status">Loading…</p><div class="threads" id="threads"></div><div class="pager"><button id="prev-inbox" hidden>← Newer</button><button id="next-inbox" hidden>Older →</button></div></aside>
+<section class="panel" id="conversation-panel" aria-label="Private conversation">
+<div class="chat-head"><a href="chat.html" class="back back-messages">← Back to Messages</a><h2 id="chat-name">Choose a teammate</h2><p class="muted" id="chat-detail">Open a conversation or find a player to chat with.</p></div>
 <div class="controls"><button id="older" hidden>Load older messages</button><button id="refresh">Refresh</button></div>
 <p class="notice" id="chat-status" role="status"></p>
-<div id="messages" class="messages" aria-label="Message history" tabindex="0"><p class="empty">Your conversations will appear here.</p></div>
+<div id="messages" class="messages" aria-label="Message history" tabindex="0"><p class="empty">Loading this conversation…</p></div>
 <form class="composer" id="composer" hidden><label for="message">Your message</label><textarea id="message" maxlength="2000" required placeholder="Hey! Want to team up?"></textarea><div class="send-row"><span class="muted">Up to 2,000 characters</span><button class="primary" id="send" type="submit">Send →</button></div><p class="muted" id="send-status" role="status"></p></form>
 </section>
 </div>
@@ -47,6 +60,7 @@ a:focus-visible,button:focus-visible,textarea:focus-visible{outline:3px solid #f
     const $ = id => document.getElementById(id);
     const peer = new URLSearchParams(location.search).get("player");
     const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    $("app").dataset.view = peer ? "chat" : "inbox";
     const records = new Map();
     let client, me, ready = false, starting = false, stopped = false;
     let loadingChat = false, loadingInbox = false, sending = false;
@@ -156,11 +170,13 @@ a:focus-visible,button:focus-visible,textarea:focus-visible{outline:3px solid #f
                 const link = element("a", "", "thread" + (row.peer_id === peer ? " active" : ""));
                 link.href = "chat.html?player=" + encodeURIComponent(row.peer_id);
                 link.append(element("strong",names.get(row.peer_id) || "Gamer"),element("small",row.body));
+                link.append(element("span", "Open chat →", "open-chat"));
+                link.setAttribute("aria-label", "Open chat with " + (names.get(row.peer_id) || "Gamer"));
                 fragment.append(link);
             }
             // Avoid replacing a focused link during an automatic refresh.
             if (!$("threads").contains(document.activeElement)) $("threads").replaceChildren(fragment);
-            $("inbox-status").textContent = visible.length ? "Your private conversations" : "No conversations here yet. Find a teammate and say hello.";
+            $("inbox-status").textContent = visible.length ? "Tap a player to open your chat." : "No conversations here yet. Find a teammate and say hello.";
             $("prev-inbox").hidden = inboxPage === 0;
             $("next-inbox").hidden = rows.length <= 20;
         } catch (error) { $("inbox-status").textContent = explain(error); }
@@ -230,6 +246,7 @@ a:focus-visible,button:focus-visible,textarea:focus-visible{outline:3px solid #f
             $("send").textContent = pending ? "Retry send" : "Send →";
         }
     });
+    $("refresh-inbox").addEventListener("click", () => { void loadInbox(); });
     $("retry-account").addEventListener("click", start);
     $("older").addEventListener("click", () => loadChat(true));
     $("refresh").addEventListener("click", () => { void loadInbox(); void loadChat(); });
