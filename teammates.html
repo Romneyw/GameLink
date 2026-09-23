@@ -351,6 +351,11 @@
     const previous = document.getElementById("previous");
     const next = document.getElementById("next");
 
+    const requestedGame = new URLSearchParams(location.search).get("game");
+    if (requestedGame && Array.from(gameInput.options).some(option => option.value === requestedGame)) {
+        gameInput.value = requestedGame;
+    }
+
     const readyInput = document.getElementById("ready-only");
     readyInput.checked = new URLSearchParams(location.search).get("ready") === "1";
     const pageSize = 12;
