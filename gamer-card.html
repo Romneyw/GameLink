@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GameLink | Gamer Card Studio</title>
+<link rel="stylesheet" href="gamer-card.css?v=1">
+</head>
+<body>
+<header><a class="logo" href="index.html">🎮 <span>Game</span>Link</a><a class="quiet" href="dashboard.html">My account →</a></header>
+<main>
+<div class="intro"><p class="eyebrow">GAMER CARD STUDIO</p><h1>Your gamer identity.<br><span>Make it yours.</span></h1><p>Choose your look. Add your games. Build a card worth showing.</p><p class="draft-note" id="draft-status" role="status">Opening your draft…</p></div>
+<div class="studio">
+<section class="editor" aria-label="Card details">
+<form id="card-form">
+<fieldset><legend>01 / Choose your edition</legend><div class="designs">
+<label class="design crimson"><input type="radio" name="design" value="crimson" checked><span>Crimson</span><small>Bold / angular</small></label>
+<label class="design ion"><input type="radio" name="design" value="ion"><span>Ion</span><small>Clean / electric</small></label>
+<label class="design venom"><input type="radio" name="design" value="venom"><span>Venom</span><small>Technical / sharp</small></label>
+</div><p class="hint">Three standard designs. No limited-edition claim is made here.</p></fieldset>
+<fieldset><legend>02 / Your identity</legend>
+<label for="gamer-name">Gamer name</label><input id="gamer-name" maxlength="40" placeholder="Your gamer name" autocomplete="nickname">
+<label for="avatar-file">Avatar</label><input id="avatar-file" type="file" accept="image/jpeg,image/png,image/webp"><p class="hint">JPG, PNG or WebP, up to 8 MB. Choose an image you can share publicly.</p>
+<div id="avatar-controls" hidden>
+<label for="zoom">Zoom</label><input id="zoom" type="range" min="1" max="2.5" step="0.05" value="1">
+<label for="position-x">Horizontal position</label><input id="position-x" type="range" min="0" max="100" value="50">
+<label for="position-y">Vertical position</label><input id="position-y" type="range" min="0" max="100" value="50">
+<button id="remove-avatar" type="button" class="quiet">Remove avatar</button>
+</div><p id="avatar-status" role="status" class="hint"></p>
+</fieldset>
+<fieldset><legend>03 / Your games</legend><p class="hint">Choose up to three favourites for this card. Ranks are optional and self-reported.</p><div id="game-fields"></div></fieldset>
+<fieldset><legend>04 / How you play</legend>
+<div class="two"><div><label for="platform">Platform</label><select id="platform"><option>Mobile</option><option>PC</option><option>PlayStation</option><option>Xbox</option><option>Nintendo Switch</option><option>Multiple platforms</option></select></div><div><label for="language">Language</label><input id="language" maxlength="32" placeholder="English / Français"></div></div>
+<label for="player-id">Public player ID — optional</label><input id="player-id" maxlength="40" placeholder="Include the game if needed">
+<label for="play-times">Usual play times</label><input id="play-times" maxlength="42" placeholder="Weekdays 19:00–22:00">
+<label for="timezone">Timezone</label><input id="timezone" maxlength="48" list="timezones" placeholder="Africa/Douala"><datalist id="timezones"></datalist>
+<div class="two"><div><label for="play-style">Play style</label><select id="play-style"><option>Casual</option><option>Competitive</option><option>Casual & competitive</option><option>Learning / improving</option></select></div><div><label for="microphone">Microphone</label><select id="microphone"><option>Mic on</option><option>Mic optional</option><option>No mic</option></select></div></div>
+</fieldset>
+</form>
+<button class="quiet" id="reset-draft" type="button">Start a new draft</button>
+</section>
+<section class="preview-panel" aria-label="Live card preview"><div class="preview-head"><span>LIVE PREVIEW</span><span>STANDARD EDITION</span></div><canvas id="card-canvas" width="1080" height="1440" role="img" aria-label="Your gamer card preview"></canvas><p class="hint">Updates as you type. Your draft stays in this browser when device storage is available.</p><p class="hint">Your image and details stay on this device in this editor preview.</p></section>
+</div>
+</main>
+<script src="gamer-card.js?v=1"></script>
+</body></html>
