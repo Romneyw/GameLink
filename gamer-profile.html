@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>GameLink | Gamer Profile</title>
-<link rel="stylesheet" href="gamer-card.css?v=3">
+<link rel="stylesheet" href="gamer-card.css?v=5">
 </head>
 <body class="public-card" data-public="true">
 <header><a class="logo" href="index.html">🎮 <span>Game</span>Link</a><a class="quiet" href="dashboard.html">My account →</a></header>
@@ -20,7 +20,7 @@
 <div class="two"><div><label for="accent">Accent colour</label><input type="color" id="accent" value="#ff4775"></div><div><label for="card-font">Name style</label><select id="card-font"><option value="Arial">Bold</option><option value="Georgia">Classic</option><option value="monospace">Arcade</option></select></div></div>
 <label for="background">Background</label><select id="background"><option value="signature">Signature pattern</option><option value="grid">Grid</option><option value="orbits">Orbits</option><option value="clean">Clean glow</option><option value="photo">My image</option></select>
 <details><summary>Upload your own background</summary><label for="background-file">Choose image</label><input id="background-file" type="file" accept="image/jpeg,image/png,image/webp"><p class="hint">JPG, PNG or WebP, up to 8 MB. Images are centre-cropped and darkened for readability.</p><button type="button" class="quiet" id="remove-background">Remove background image</button><p id="background-status" role="status" class="hint"></p></details>
-<div class="founder"><strong>✦ FIRST 10 · Locked</strong><p>Exclusive background + numbered badge for 10 eligible members. Claims are not open yet.</p><small>Your standard card stays free.</small></div></fieldset>
+<div class="founder founder-violet"><p class="eyebrow">THE ORIGINAL TEN</p><h2>Founding Player</h2><p>Black chrome. Electric violet. Your place at the beginning.</p><label class="founder-choice"><input type="radio" name="design" value="founder"> Preview the exclusive design</label><p id="founder-status" role="status">Checking edition availability…</p><button type="button" id="claim-founder" class="quiet" disabled>Claim my edition</button> <button type="button" id="refresh-founder" class="quiet">Refresh availability</button><p id="founder-help" class="hint"></p><a href="setup-profile.html">Complete / edit gamer profile →</a><small>One claim per eligible account. 10 numbered editions in total. Standard designs stay free.</small></div></fieldset>
 <fieldset><legend>02 / Your identity</legend>
 <label for="gamer-name">Gamer name</label><input id="gamer-name" maxlength="40" placeholder="Your gamer name" autocomplete="nickname">
 <label for="avatar-file">Avatar</label><input id="avatar-file" type="file" accept="image/jpeg,image/png,image/webp"><p class="hint">JPG, PNG or WebP, up to 8 MB. Choose an image you can share publicly.</p>
@@ -53,5 +53,5 @@
 </div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="gamer-card.js?v=4"></script>
+<script src="gamer-card.js?v=5"></script>
 </body></html>

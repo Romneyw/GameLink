@@ -3,6 +3,9 @@
 const $=id=>document.getElementById(id),canvas=$('card-canvas'),ctx=canvas.getContext('2d');
 const publicMode=document.body.dataset.public==='true';
 let profileURL='',sharingClient=null,shareBusy=false;
+let founderNumber=null,founderState=null,founderBusy=false,founderEpoch=0;
+function validNumber(n){return Number.isInteger(n)&&n>=1&&n<=10;}
+function isFounder(){return design()==='founder';}
 const games=['Blood Strike','Brawlhalla','Free Fire','Fortnite','Minecraft','Call of Duty Mobile','FC Mobile','Dream League Soccer','eFootball','PUBG Mobile','Roblox'];
 const fields=['gamer-name','platform','language','player-id','play-times','timezone','play-style','microphone','zoom','position-x','position-y','accent','card-font','background'];
 let backgroundImage=null,backgroundData=null,backgroundVersion=0;
@@ -22,18 +25,19 @@ function design(){return document.querySelector('input[name="design"]:checked').
 function value(id,fallback){return $(id).value.trim()||fallback||'';}
 function text(str,x,y,size=28,color='#eff0f7',weight='400',width=900){ctx.font=weight+' '+size+'px '+(size>=40?value('card-font','Arial'):'Arial');ctx.fillStyle=color;while(ctx.measureText(str).width>width&&size>15){size--;ctx.font=weight+' '+size+'px '+(size>=40?value('card-font','Arial'):'Arial');}if(ctx.measureText(str).width>width){while(str.length&&ctx.measureText(str+'…').width>width)str=str.slice(0,-1);str+='…';}ctx.fillText(str,x,y);}
 function rect(x,y,w,h,r,fill,stroke){ctx.beginPath();ctx.roundRect(x,y,w,h,r);if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=2;ctx.stroke();}}
-function avatarPath(d){ctx.beginPath();if(d==='ion')ctx.arc(540,397,207,0,Math.PI*2);else if(d==='venom'){const x=310,y=175,w=460,h=450,c=55;ctx.moveTo(x+c,y);ctx.lineTo(x+w-c,y);ctx.lineTo(x+w,y+c);ctx.lineTo(x+w,y+h-c);ctx.lineTo(x+w-c,y+h);ctx.lineTo(x+c,y+h);ctx.lineTo(x,y+h-c);ctx.lineTo(x,y+c);ctx.closePath();}else ctx.roundRect(310,175,460,450,36);}
+function avatarPath(d){ctx.beginPath();if(d==='ion')ctx.arc(540,397,207,0,Math.PI*2);else if(d==='venom'||d==='founder'){const x=310,y=175,w=460,h=450,c=55;ctx.moveTo(x+c,y);ctx.lineTo(x+w-c,y);ctx.lineTo(x+w,y+c);ctx.lineTo(x+w,y+h-c);ctx.lineTo(x+w-c,y+h);ctx.lineTo(x+c,y+h);ctx.lineTo(x,y+h-c);ctx.lineTo(x,y+c);ctx.closePath();}else ctx.roundRect(310,175,460,450,36);}
 function render(){
- const d=design(),accent=/^#[0-9a-f]{6}$/i.test(value('accent'))?value('accent'):'#ff4775';ctx.clearRect(0,0,1080,1440);
+ const d=design(),accent=d==='founder'?'#b597ff':/^#[0-9a-f]{6}$/i.test(value('accent'))?value('accent'):'#ff4775';ctx.clearRect(0,0,1080,1440);
  rect(0,0,1080,1440,42,'#090c14');
- if(backgroundImage&&value('background')==='photo'){ctx.save();ctx.beginPath();ctx.roundRect(0,0,1080,1440,42);ctx.clip();const scale=Math.max(1080/backgroundImage.width,1440/backgroundImage.height),w=backgroundImage.width*scale,h=backgroundImage.height*scale;ctx.drawImage(backgroundImage,(1080-w)/2,(1440-h)/2,w,h);ctx.fillStyle='#090c14c9';ctx.fillRect(0,0,1080,1440);ctx.restore();}const glow=ctx.createRadialGradient(d==='crimson'?930:540,250,20,540,400,760);glow.addColorStop(0,accent+'35');glow.addColorStop(1,'#090c1400');ctx.fillStyle=glow;ctx.fillRect(0,0,1080,1440);
+ if(d!=='founder'&&backgroundImage&&value('background')==='photo'){ctx.save();ctx.beginPath();ctx.roundRect(0,0,1080,1440,42);ctx.clip();const scale=Math.max(1080/backgroundImage.width,1440/backgroundImage.height),w=backgroundImage.width*scale,h=backgroundImage.height*scale;ctx.drawImage(backgroundImage,(1080-w)/2,(1440-h)/2,w,h);ctx.fillStyle='#090c14c9';ctx.fillRect(0,0,1080,1440);ctx.restore();}const glow=ctx.createRadialGradient(d==='crimson'?930:540,250,20,540,400,760);glow.addColorStop(0,accent+'35');glow.addColorStop(1,'#090c1400');ctx.fillStyle=glow;ctx.fillRect(0,0,1080,1440);
  const metal=ctx.createLinearGradient(0,0,1080,1440);metal.addColorStop(0,'#f1f1f5');metal.addColorStop(.24,'#353d4b');metal.addColorStop(.5,'#9ea6b4');metal.addColorStop(.75,'#202937');metal.addColorStop(1,'#8e96a2');rect(18,18,1044,1404,32,null,metal);rect(30,30,1020,1380,26,null,accent+'55');
- const pattern=value('background')==='signature'?d:value('background');
+ const pattern=d==='founder'?'founder':value('background')==='signature'?d:value('background');
  ctx.save();ctx.strokeStyle=accent+'20';ctx.lineWidth=1;if(pattern==='venom'||pattern==='grid'){for(let x=60;x<1040;x+=40){ctx.beginPath();ctx.moveTo(x,120);ctx.lineTo(x,680);ctx.stroke();}for(let y=120;y<700;y+=40){ctx.beginPath();ctx.moveTo(60,y);ctx.lineTo(1020,y);ctx.stroke();}}else if(pattern==='crimson'){ctx.fillStyle=accent+'12';ctx.beginPath();ctx.moveTo(700,35);ctx.lineTo(1040,35);ctx.lineTo(650,660);ctx.lineTo(450,660);ctx.fill();}else if(pattern==='ion'||pattern==='orbits'){for(let r=245;r<380;r+=40){ctx.beginPath();ctx.arc(540,397,r,0,Math.PI*2);ctx.stroke();}}ctx.restore();
- text('GAME',68,95,31,accent,'900',130);text('LINK',170,95,31,'#fff','900',100);text('STANDARD / '+d.toUpperCase(),680,95,19,'#c0c6d2','700',330);
+ if(d==='founder')paintFounder();
+ text('GAME',68,95,31,accent,'900',130);text('LINK',170,95,31,'#fff','900',100);text(d==='founder'?'FOUNDING PLAYER':'STANDARD / '+d.toUpperCase(),680,95,19,'#c0c6d2','700',330);
  ctx.save();avatarPath(d);ctx.clip();ctx.fillStyle='#161e2b';ctx.fillRect(290,160,500,490);
  if(avatar){const w=460,h=450,scale=Math.max(w/avatar.width,h/avatar.height)*Number($('zoom').value),dw=avatar.width*scale,dh=avatar.height*scale;ctx.drawImage(avatar,310-(dw-w)*Number($('position-x').value)/100,175-(dh-h)*Number($('position-y').value)/100,dw,dh);}else{ctx.fillStyle=accent+'30';ctx.beginPath();ctx.arc(540,330,88,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.ellipse(540,555,180,130,0,0,Math.PI*2);ctx.fill();}ctx.restore();avatarPath(d);ctx.strokeStyle=accent;ctx.lineWidth=4;ctx.shadowColor=accent;ctx.shadowBlur=16;ctx.stroke();ctx.shadowBlur=0;
- text('PLAYER IDENTITY',72,698,20,accent,'700');text(value('gamer-name','YOUR GAMER NAME'),68,771,64,'#fff','900',940);
+ if(d==='founder'){rect(68,659,944,52,9,'#20152f','#9874db');text(validNumber(founderNumber)?'FOUNDING PLAYER  /  #'+String(founderNumber).padStart(3,'0')+' / 010':'DESIGN PREVIEW  /  NOT CLAIMED',90,693,22,'#eadfff','700',860);}else text('PLAYER IDENTITY',72,698,20,accent,'700');text(value('gamer-name','YOUR GAMER NAME'),68,771,64,'#fff','900',940);
  text(value('platform','Mobile')+'  /  '+value('play-style','Casual'),72,819,24,'#bcc5d4','700',940);
  let filled=0;for(let i=0;i<3;i++){const game=value('game-'+i);if(!game)continue;const y=856+filled*68;rect(68,y,944,58,10,'#131c29','#303b4a');text(game,86,y+38,27,'#fff','700',470);const rank=value('rank-'+i);text(rank||'Rank not listed',590,y+37,22,rank?accent:'#8e99ab','400',400);filled++;}
  if(!filled)text('Your favourite games will appear here',72,905,27,'#8692a5');
@@ -41,6 +45,7 @@ function render(){
  items.forEach(([label,v],i)=>{const x=i%2?560:72,y=1110+Math.floor(i/2)*90;text(label,x,y,17,accent,'700',450);text(v,x,y+34,26,'#e4e9f0','400',440);});
  text('PUBLIC PLAYER ID',72,1300,16,'#8797ad','700');text(value('player-id','Not listed'),290,1300,22,'#d0d8e6','400',720);
  ctx.fillStyle='#303948';ctx.fillRect(68,1330,944,1);text('GAMELINK / FIND YOUR PEOPLE',72,1360,20,accent,'700',600);if(profileURL)text(profileURL.replace(/^https?:\/\//,''),72,1400,17,'#e4e9f0','400',936);text('Ranks are self-reported',710,1370,17,'#929caf','400',300);
+ if(d==='founder'&&!validNumber(founderNumber)){ctx.save();ctx.translate(540,420);ctx.rotate(-.25);ctx.fillStyle='#080911d9';ctx.fillRect(-410,-42,820,84);ctx.textAlign='center';text('PREVIEW · CLAIM TO UNLOCK',0,12,34,'#e4d2ff','700',790);ctx.restore();}
  canvas.setAttribute('aria-label','Gamer card for '+value('gamer-name','your gamer name')+', '+d+' design. '+items.map(x=>x.join(': ')).join('. '));
 }
 function snapshot(){return{version:1,values:Object.fromEntries(fields.map(id=>[id,$(id).value])),design:design(),avatar:avatarData,backgroundImage:backgroundData};}
@@ -84,14 +89,16 @@ async function init(){
  render();$('card-form').inert=true;$('reset-draft').disabled=true;
  try{db=await new Promise((resolve,reject)=>{const req=indexedDB.open('gamelink-card-editor',1);req.onupgradeneeded=()=>req.result.createObjectStore('drafts');req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);req.onblocked=()=>reject(new Error('Storage is busy'));});
  const draft=await new Promise((resolve,reject)=>{const req=db.transaction('drafts').objectStore('drafts').get('current');req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});
- if(draft?.version===1){for(const id of fields){if(typeof draft.values?.[id]==='string')$(id).value=draft.values[id];}if(['crimson','ion','venom'].includes(draft.design))document.querySelector('input[value="'+draft.design+'"]').checked=true;if(draft.backgroundImage){try{backgroundImage=await decode(draft.backgroundImage);backgroundData=draft.backgroundImage;}catch{$('background-status').textContent='Please select your background image again.';}}if(draft.avatar){try{avatar=await decode(draft.avatar);avatarData=draft.avatar;$('avatar-controls').hidden=false;}catch{$('avatar-status').textContent='The saved avatar could not load. Please select it again.';}}$('draft-status').textContent='Your saved draft is restored.';}else $('draft-status').textContent='Your draft will be saved on this device as you edit.';
+ if(draft?.version===1){for(const id of fields){if(typeof draft.values?.[id]==='string')$(id).value=draft.values[id];}if(['crimson','ion','venom','founder'].includes(draft.design))document.querySelector('input[value="'+draft.design+'"]').checked=true;if(draft.backgroundImage){try{backgroundImage=await decode(draft.backgroundImage);backgroundData=draft.backgroundImage;}catch{$('background-status').textContent='Please select your background image again.';}}if(draft.avatar){try{avatar=await decode(draft.avatar);avatarData=draft.avatar;$('avatar-controls').hidden=false;}catch{$('avatar-status').textContent='The saved avatar could not load. Please select it again.';}}$('draft-status').textContent='Your saved draft is restored.';}else $('draft-status').textContent='Your draft will be saved on this device as you edit.';
  }catch{$('draft-status').textContent='Device storage is unavailable. Keep this page open to retain your draft.';}
- finally{restoring=false;$('card-form').inert=false;$('reset-draft').disabled=false;render();for(const id of ['download-card','publish-card','load-card','unpublish-card'])$(id).disabled=false;}
+ finally{restoring=false;$('card-form').inert=false;$('reset-draft').disabled=false;render();for(const id of ['download-card','publish-card','load-card','unpublish-card'])$(id).disabled=false;void refreshFounder();}
 }
 /* SHARING */
 function client(){
  if(!window.supabase)throw new Error('The account service did not load. Refresh and try again. PNG downloads still work.');
- if(!sharingClient)sharingClient=window.supabase.createClient('https://arlhkjocegnppfziikpo.supabase.co','sb_publishable_aWWQyhe1KrXskToB9nU2_A_SsFpUPbv');
+ if(!sharingClient){sharingClient=window.supabase.createClient('https://arlhkjocegnppfziikpo.supabase.co','sb_publishable_aWWQyhe1KrXskToB9nU2_A_SsFpUPbv');
+ sharingClient.auth.onAuthStateChange(()=>{if(publicMode)return;founderEpoch++;founderNumber=null;founderState=null;paintFounderStatus();render();setTimeout(()=>void refreshFounder(),0);});}
+
  return sharingClient;
 }
 async function query(q){const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),15000);try{const result=await q.abortSignal(controller.signal);if(result.error)throw result.error;return result.data;}finally{clearTimeout(timeout);}}
@@ -110,36 +117,83 @@ async function applyCard(draft){
  for(const id of fields){const v=draft.values[id];if(typeof v==='string')$(id).value=v.slice(0,120);}
  if(!['Arial','Georgia','monospace'].includes(value('card-font')))$('card-font').value='Arial';
  for(const [id,min,max,def] of [['zoom',1,2.5,1],['position-x',0,100,50],['position-y',0,100,50]]){$(id).value=String(Math.min(max,Math.max(min,Number($(id).value)||def)));}
- document.querySelector('input[value="'+(['crimson','ion','venom'].includes(draft.design)?draft.design:'crimson')+'"]').checked=true;
+ document.querySelector('input[value="'+(['crimson','ion','venom','founder'].includes(draft.design)?draft.design:'crimson')+'"]').checked=true;
  avatar=images[0];avatarData=avatar?draft.avatar:null;backgroundImage=images[1];backgroundData=backgroundImage?draft.backgroundImage:null;$('avatar-controls').hidden=!avatar;render();
 }
 async function task(fn){if(shareBusy)return;shareBusy=true;for(const id of ['publish-card','load-card','unpublish-card'])$(id).disabled=true;$('share-status').textContent='Working…';try{await fn();}catch(e){$('share-status').textContent=['42P01','PGRST205'].includes(e.code)?'Public sharing needs setup. Run card-sharing.sql in Supabase first.':(e.message||'Could not connect. Please try again.');}finally{shareBusy=false;for(const id of ['publish-card','load-card','unpublish-card'])$(id).disabled=false;}}
 $('publish-card').addEventListener('click',()=>task(async()=>{
  if(!value('gamer-name')||!fields.some(id=>/^game-\d$/.test(id)&&value(id)))throw new Error('Add your gamer name and at least one game first.');
- const user=await owner(),payload=snapshot();if(new Blob([JSON.stringify(payload)]).size>6000000)throw new Error('These images are too large to publish together. Try smaller images.');
+ const user=await owner();if(isFounder()){await refreshFounder(true);if(!validNumber(founderNumber))throw new Error('Claim your Founding Player edition before publishing this design.');}const payload=snapshot();if(new Blob([JSON.stringify(payload)]).size>6000000)throw new Error('These images are too large to publish together. Try smaller images.');
  await query(client().from('gamelink_public_cards').upsert({id:user.id,card:payload},{onConflict:'id'}));showLink(user.id);$('login-help').hidden=true;$('share-status').textContent=JSON.stringify(snapshot())===JSON.stringify(payload)?'Published! Copy your link or download your card with the profile address on it.':'Card published, but you made newer local edits. Publish again to include them.';
 }));
 $('load-card').addEventListener('click',()=>task(async()=>{
  const user=await owner(),row=await query(client().from('gamelink_public_cards').select('card').eq('id',user.id).maybeSingle());if(!row)throw new Error('You have not published a card yet.');
  if(!confirm('Replace the current draft with your published card?')){$('share-status').textContent='Your current draft was kept.';return;}
- await applyCard(row.card);showLink(user.id);save();$('share-status').textContent='Published card loaded. Edit it, then publish again to update.';
+ await refreshFounder();await applyCard(row.card);showLink(user.id);save();$('share-status').textContent='Published card loaded. Edit it, then publish again to update.';
 }));
 $('unpublish-card').addEventListener('click',()=>task(async()=>{
  const user=await owner();if(!confirm('Remove your public card? Existing downloaded images will remain with anyone who saved them.')){$('share-status').textContent='No changes made.';return;}
  await query(client().from('gamelink_public_cards').delete().eq('id',user.id));profileURL='';$('published-link').hidden=true;render();$('share-status').textContent='Public card removed. Your local draft is still here.';
 }));
-$('download-card').addEventListener('click',()=>{
- render();$('download-card').disabled=true;canvas.toBlob(blob=>{try{if(!blob)throw new Error('Could not create the image. Please try again.');const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='GameLink-'+(value('gamer-name','gamer').replace(/[^a-z0-9_-]/gi,'-').slice(0,40))+'.png';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);$('share-status').textContent=profileURL?'PNG ready. Share it with your copied profile link.':'PNG ready. Publish your card to get a profile link too.';}catch(e){$('share-status').textContent=e.message;}finally{$('download-card').disabled=false;}},'image/png');
+$('download-card').addEventListener('click',async()=>{
+ if(isFounder()){try{await refreshFounder(true);if(!validNumber(founderNumber))throw new Error('Claim this edition first, or choose a free standard design to download.');}catch(e){$('share-status').textContent=e.message;return;}}render();$('download-card').disabled=true;canvas.toBlob(blob=>{try{if(!blob)throw new Error('Could not create the image. Please try again.');const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='GameLink-'+(value('gamer-name','gamer').replace(/[^a-z0-9_-]/gi,'-').slice(0,40))+'.png';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);$('share-status').textContent=profileURL?'PNG ready. Share it with your copied profile link.':'PNG ready. Publish your card to get a profile link too.';}catch(e){$('share-status').textContent=e.message;}finally{$('download-card').disabled=false;}},'image/png');
 });
 $('copy-link').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(profileURL);$('share-status').textContent='Profile link copied!';}catch{$('profile-link').focus();$('profile-link').select();$('share-status').textContent='Press and hold the selected link to copy it.';}});
 $('share-link').addEventListener('click',async()=>{if(!navigator.share){$('copy-link').click();return;}try{await navigator.share({title:'My GameLink gamer card',text:'Find your squad. Here’s my gamer card!',url:profileURL});}catch(e){if(e.name!=='AbortError')$('share-status').textContent='Sharing unavailable. Use Copy profile link instead.';}});
 async function loadPublic(){
  const panel=document.querySelector('.preview-panel');panel.hidden=true;
  try{const id=new URLSearchParams(location.search).get('id');if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id||''))throw new Error('This profile link is incomplete. Ask the gamer for their full link.');
- const row=await query(client().from('gamelink_public_cards').select('card').eq('id',id).maybeSingle());if(!row)throw new Error('This card is unavailable or has been removed.');
- await applyCard(row.card);profileURL=linkFor(id);render();panel.hidden=false;if($('chat-owner')){$('chat-owner').href='chat.html?player='+encodeURIComponent(id);$('chat-owner').hidden=false;}$('draft-status').textContent=value('gamer-name')+' · Public gamer card · Ranks are self-reported';document.title=value('gamer-name')+' | GameLink';
+ const row=await query(client().from('gamelink_public_cards').select('card,founder_number').eq('id',id).maybeSingle());if(!row)throw new Error('This card is unavailable or has been removed.');
+ founderNumber=validNumber(row.founder_number)?row.founder_number:null;if(row.card.design==='founder'&&!founderNumber)throw new Error('This edition could not be verified.');await applyCard(row.card);profileURL=linkFor(id);render();panel.hidden=false;if($('chat-owner')){$('chat-owner').href='chat.html?player='+encodeURIComponent(id);$('chat-owner').hidden=false;}$('draft-status').textContent=value('gamer-name')+(isFounder()?' · Founding Player #'+String(founderNumber).padStart(3,'0'):' · Public gamer card')+' · Ranks are self-reported';document.title=value('gamer-name')+' | GameLink';
  }catch(e){$('draft-status').textContent=e.message||'Could not load this card. Refresh to try again.';}
 }
+
+function paintFounder(){
+ ctx.save();
+ // Black-chrome facets and an oversized etched GameLink monogram.
+ const chrome=ctx.createLinearGradient(60,150,1020,650);chrome.addColorStop(0,'#080910');chrome.addColorStop(.4,'#30273e');chrome.addColorStop(.5,'#15121f');chrome.addColorStop(.8,'#080910');chrome.addColorStop(1,'#372b4e');
+ ctx.fillStyle=chrome;ctx.beginPath();ctx.moveTo(42,140);ctx.lineTo(1038,140);ctx.lineTo(1038,625);ctx.lineTo(850,655);ctx.lineTo(42,590);ctx.closePath();ctx.fill();
+ ctx.font='900 410px Arial';ctx.fillStyle='#bda2ff0d';ctx.fillText('GL',190,570);
+ const holo=ctx.createLinearGradient(30,40,1050,1400);[[0,'#f0eaff'],[.16,'#736781'],[.31,'#b596ed'],[.43,'#f1fffe'],[.56,'#463957'],[.7,'#bf91ff'],[.86,'#799ea4'],[1,'#e6d3ff']].forEach(([a,b])=>holo.addColorStop(a,b));
+ ctx.strokeStyle=holo;ctx.lineWidth=9;ctx.beginPath();ctx.roundRect(21,21,1038,1398,32);ctx.stroke();
+ // Geometric halo behind the avatar; all effects export with the canvas.
+ ctx.strokeStyle='#ad78ff';ctx.shadowColor='#9e54ff';ctx.shadowBlur=25;ctx.lineWidth=3;
+ for(let ring=0;ring<3;ring++){const r=260+ring*39;ctx.beginPath();for(let i=0;i<=6;i++){const a=Math.PI/3*i-Math.PI/2,x=540+Math.cos(a)*r,y=400+Math.sin(a)*r*.73;i?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.stroke();}
+ ctx.shadowBlur=0;ctx.save();ctx.beginPath();ctx.rect(42,145,996,510);ctx.clip();ctx.strokeStyle='#d6c3ff3b';ctx.lineWidth=1;
+ for(let i=0;i<18;i++){const x=65+i*57;ctx.beginPath();ctx.moveTo(x,155);ctx.lineTo(x+110,240);ctx.stroke();ctx.beginPath();ctx.moveTo(x,605);ctx.lineTo(x-60,640);ctx.stroke();}
+ ctx.restore();for(const [x,y,sx,sy] of [[54,130,1,1],[1026,130,-1,1],[54,1310,1,-1],[1026,1310,-1,-1]]){ctx.strokeStyle=holo;ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(x,y+sy*68);ctx.lineTo(x,y);ctx.lineTo(x+sx*70,y);ctx.stroke();}
+ text('O R I G I N S',76,182,15,'#d0b2ff','700',210);
+ text('EST. 2026',820,608,17,'#c8b1ed','700',190);
+ ctx.restore();
+}
+function paintFounderStatus(){
+ if(publicMode)return;
+ const s=founderState;
+ $('claim-founder').disabled=founderBusy||!s||!s.logged_in||!s.eligible||s.remaining===0||validNumber(s.my_number);
+ $('refresh-founder').disabled=founderBusy;
+ if(!s){$('founder-status').textContent='Availability not confirmed.';$('founder-help').textContent='Refresh to check your edition and the live claim count.';return;}
+ $('founder-status').textContent=validNumber(s.my_number)?'You own #'+String(s.my_number).padStart(3,'0')+' / 010':s.remaining+' of 10 editions available at last check';
+ $('claim-founder').textContent=validNumber(s.my_number)?'Your edition is unlocked':s.remaining===0?'All editions claimed':'Claim my edition';
+ $('founder-help').textContent=validNumber(s.my_number)?'Select the exclusive design, then publish or download. Your number stays yours.':!s.logged_in?'Log in from My account, then return here to claim.':!s.eligible?'Complete your gamer profile below to become eligible.':s.remaining===0?'All 10 have been issued. Standard cards remain available.':'Ready to claim. Your unique number is assigned when your claim succeeds.';
+}
+async function refreshFounder(throwErrors=false){
+ const epoch=++founderEpoch;
+ try{
+ const s=await query(client().rpc('gamelink_founder_status'));
+ if(epoch!==founderEpoch){if(throwErrors)throw new Error('Account changed. Please try again.');return;}
+ if(!s||!Number.isInteger(s.remaining)||s.remaining<0||s.remaining>10)throw new Error('Could not confirm edition availability.');
+ founderState=s;founderNumber=validNumber(s.my_number)?s.my_number:null;paintFounderStatus();render();
+ }catch(e){if(epoch===founderEpoch){founderNumber=null;founderState=null;paintFounderStatus();$('founder-help').textContent=['PGRST202','42P01','PGRST204','42703'].includes(e.code)?'Edition setup is needed. Run first-ten.sql in Supabase, then refresh.':e.message||'Could not check availability. Please try again.';render();}if(throwErrors)throw e;}
+}
+$('refresh-founder').addEventListener('click',()=>void refreshFounder());
+$('claim-founder').addEventListener('click',async()=>{
+ if(founderBusy)return;founderBusy=true;paintFounderStatus();$('founder-help').textContent='Securing your number…';
+ const epoch=++founderEpoch;
+ try{const s=await query(client().rpc('gamelink_claim_founder'));if(epoch!==founderEpoch)throw new Error('Account changed. Refresh to check your claim.');if(!validNumber(s?.my_number))throw new Error('Could not confirm your claim. Refresh availability before trying again.');founderState=s;founderNumber=s.my_number;document.querySelector('input[value="founder"]').checked=true;changed();}
+ catch(e){await refreshFounder();$('share-status').textContent=e.message+' Refresh availability to confirm your claim; a retry will keep the same number.';}
+ finally{founderBusy=false;paintFounderStatus();render();}
+});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!publicMode&&!restoring&&!founderBusy)void refreshFounder();});
 
 void init();
 })();
