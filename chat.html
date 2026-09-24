@@ -4,268 +4,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GameLink | Messages</title>
-<style>
-*{box-sizing:border-box} [hidden]{display:none!important}
-body{margin:0;background:#06070d;color:#f5f5fa;font-family:Arial,sans-serif}
-a{color:inherit} header{background:#0b0c14;border-bottom:1px solid #292b39}
-nav{max-width:1150px;margin:auto;padding:20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.logo{font-size:24px;font-weight:800;text-decoration:none}.logo span{color:#ff174f}
-.nav-links{display:flex;gap:10px;flex-wrap:wrap}.back,button{padding:12px 16px;border:1px solid #343645;border-radius:10px;background:#191b29;color:white;font:inherit;text-decoration:none;cursor:pointer}
-button:disabled{opacity:.5;cursor:default}button.primary{background:#ff174f;border-color:#ff174f;font-weight:700}
-main{max-width:1150px;margin:auto;padding:26px 20px}.tag{color:#ff8eac;font-size:12px;letter-spacing:2px;font-weight:bold}
-h1{font-size:32px;margin:10px 0}h2{font-size:21px;margin:0 0 8px}.muted{color:#adafc2;line-height:1.6;font-size:14px}
-.layout{display:grid;grid-template-columns:290px minmax(0,1fr);gap:18px;margin-top:24px}.panel{min-width:0;background:#11131e;border:1px solid #303042;border-radius:18px;overflow:hidden}
-.inbox{padding:20px}.threads{display:grid;gap:9px;max-height:480px;overflow:auto}.thread{display:block;padding:14px;border:1px solid #303042;border-radius:12px;text-decoration:none;overflow-wrap:anywhere}.thread.active{border-color:#ff6387;background:#ff174f12}.thread strong{display:block}.thread small{display:block;margin-top:7px;color:#adafc2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.chat-head{padding:20px;border-bottom:1px solid #292b39;background:linear-gradient(110deg,#ff174f12,transparent)}.chat-head p{margin:6px 0}.messages{height:48vh;min-height:240px;max-height:600px;overflow:auto;padding:20px;display:flex;flex-direction:column;gap:12px;overscroll-behavior:contain}
-.bubble{align-self:flex-start;max-width:85%;padding:13px 16px;background:#252838;border-radius:15px 15px 15px 3px;overflow-wrap:anywhere}.bubble.mine{align-self:flex-end;background:#8e1538;border-radius:15px 15px 3px 15px}.bubble p{white-space:pre-wrap;margin:0;line-height:1.6}.bubble time{display:block;font-size:11px;color:#e0cbd3;margin-top:8px}.empty{color:#adafc2;line-height:1.7}
-.controls{padding:12px 20px;display:flex;gap:10px;flex-wrap:wrap}.composer{padding:18px;border-top:1px solid #292b39}label{display:block;margin-bottom:9px;font-size:14px}textarea{display:block;width:100%;resize:vertical;min-height:90px;max-height:220px;padding:13px;background:#080a12;border:1px solid #343645;border-radius:10px;color:white;font:inherit}.send-row{display:flex;gap:12px;justify-content:space-between;align-items:center;margin-top:12px}.notice{padding:0 20px;color:#f4becd;font-size:14px;line-height:1.5}.pager{display:flex;gap:8px;margin-top:12px}
-a:focus-visible,button:focus-visible,textarea:focus-visible{outline:3px solid #ff8eac;outline-offset:3px}
-@media(max-width:720px){.layout{grid-template-columns:1fr}.threads{max-height:180px}.messages{height:45vh}.bubble{max-width:92%}main{padding:20px 12px}.nav-links{font-size:13px}}
-
-/* The inbox is a full page until a conversation is selected. */
-.layout[data-view="inbox"] { grid-template-columns:minmax(0,1fr); }
-.layout[data-view="inbox"] #conversation-panel { display:none; }
-.layout[data-view="inbox"] .threads { max-height:none; overflow:visible; }
-.inbox-heading { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
-.thread .open-chat { display:block; margin-top:12px; color:#ff8eac; font-size:13px; font-weight:bold; }
-.thread:hover { border-color:#ff6387; }
-.back-messages { display:inline-block; margin-bottom:18px; }
-@media(max-width:720px) {
-    .layout[data-view="chat"] .inbox { display:none; }
-    .layout[data-view="chat"] { grid-template-columns:minmax(0,1fr); }
-}
-</style>
+<link rel="stylesheet" href="chat.css?v=2">
 </head>
 <body>
-<header><nav><a class="logo" href="dashboard.html">🎮 <span>Game</span>Link</a><div class="nav-links"><a class="back" href="teammates.html">Find Teammates</a><a class="back" href="dashboard.html">My Dashboard</a></div></nav></header>
+<header><nav><a class="logo" href="dashboard.html">🎮 <span>Game</span>Link</a><div class="nav-links"><a class="back teammates-link" href="teammates.html">Find Teammates</a><a class="back" href="chat.html">Messages <span data-unread-total hidden></span></a><a class="back" href="dashboard.html">My Account</a></div></nav></header>
 <main>
-<p class="tag">YOUR SQUAD STARTS WITH HELLO</p><h1>Messages</h1>
-<p class="muted">Plan your next match. Messages refresh automatically while this page is open.</p>
+<div class="page-intro"><div><p class="tag">YOUR SQUAD, ONE MESSAGE AWAY</p><h1>Messages</h1></div><p class="muted">Find your people. Plan your next game.</p></div>
 <p id="account-status" role="status">Checking your account…</p><button id="retry-account" hidden>Try Again</button>
 <div class="layout" id="app" data-view="inbox" hidden>
 <aside class="panel inbox"><div class="inbox-heading"><h2>Your conversations</h2><button id="refresh-inbox" type="button">Refresh</button></div><p class="muted" id="inbox-status" role="status">Loading…</p><div class="threads" id="threads"></div><div class="pager"><button id="prev-inbox" hidden>← Newer</button><button id="next-inbox" hidden>Older →</button></div></aside>
 <section class="panel" id="conversation-panel" aria-label="Private conversation">
-<div class="chat-head"><a href="chat.html" class="back back-messages">← Back to Messages</a><h2 id="chat-name">Choose a teammate</h2><p class="muted" id="chat-detail">Open a conversation or find a player to chat with.</p></div>
-<div class="controls"><button id="older" hidden>Load older messages</button><button id="refresh">Refresh</button></div>
+<div class="chat-head"><a href="chat.html" class="back back-messages" aria-label="Back to Messages">←</a><span class="avatar" id="chat-avatar" aria-hidden="true">GL</span><div class="chat-heading"><h2 id="chat-name">Choose a teammate</h2><p class="muted" id="chat-detail">Private conversation</p></div><button id="refresh" type="button" aria-label="Refresh conversation">Refresh</button></div>
+<div class="controls"><button id="older" hidden>Load older messages</button></div>
 <p class="notice" id="chat-status" role="status"></p>
 <div id="messages" class="messages" aria-label="Message history" tabindex="0"><p class="empty">Loading this conversation…</p></div>
-<form class="composer" id="composer" hidden><label for="message">Your message</label><textarea id="message" maxlength="2000" required placeholder="Hey! Want to team up?"></textarea><div class="send-row"><span class="muted">Up to 2,000 characters</span><button class="primary" id="send" type="submit">Send →</button></div><p class="muted" id="send-status" role="status"></p></form>
+<button type="button" id="new-messages" hidden>New messages ↓</button>
+<form class="composer" id="composer" hidden><label for="message">Your message</label><div class="compose-row"><textarea id="message" maxlength="2000" required rows="1" placeholder="Message your teammate…"></textarea><button class="primary" id="send" type="submit">Send →</button></div><div class="send-row"><span class="muted" id="send-status" role="status"></span><span class="muted">2,000 characters max</span></div></form>
 </section>
 </div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-(function () {
-    "use strict";
-    const $ = id => document.getElementById(id);
-    const peer = new URLSearchParams(location.search).get("player");
-    const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-    $("app").dataset.view = peer ? "chat" : "inbox";
-    const records = new Map();
-    let client, me, ready = false, starting = false, stopped = false;
-    let loadingChat = false, loadingInbox = false, sending = false;
-    let initialLoaded = false, moreHistory = false, inboxPage = 0, pending = null;
-    let newest = null, oldest = null;
-    function element(tag, value, className) {
-        const el = document.createElement(tag);
-        el.textContent = value;
-        if (className) el.className = className;
-        return el;
-    }
-    function explain(error) {
-        if (error.code === "PGRST202" || error.code === "42P01")
-            return "Chat setup is missing. Run chat-setup.sql in Supabase, then refresh.";
-        return error.message || "Connection failed. Please try again.";
-    }
-    async function request(query) {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 15000);
-        try {
-            const result = await query.abortSignal(controller.signal);
-            if (result.error) throw result.error;
-            return result.data;
-        } catch (error) {
-            if (controller.signal.aborted) throw new Error("Connection took too long. Please try again.");
-            throw error;
-        } finally { clearTimeout(timeout); }
-    }
-    async function authUser() {
-        let timer;
-        try {
-            const result = await Promise.race([
-                client.auth.getUser(),
-                new Promise((_, reject) => { timer = setTimeout(() => reject(new Error("Account check took too long. Tap Try Again.")), 15000); })
-            ]);
-            if (result.error?.name === "AuthSessionMissingError") { location.replace(peer && uuid.test(peer) ? "chat-login.html?player=" + encodeURIComponent(peer) : "login.html"); return null; }
-            if (result.error) throw result.error;
-            if (!result.data.user) { location.replace(peer && uuid.test(peer) ? "chat-login.html?player=" + encodeURIComponent(peer) : "login.html"); return null; }
-            return result.data.user;
-        } finally { clearTimeout(timer); }
-    }
-    function sortedRecords() {
-        return [...records.values()].sort((a,b) => a.created_at.localeCompare(b.created_at) || a.id.localeCompare(b.id));
-    }
-    function renderMessages(forceBottom = false) {
-        const box = $("messages");
-        const nearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 100;
-        const rows = sortedRecords();
-        box.replaceChildren();
-        if (!rows.length) box.append(element("p", "No messages yet. Say hello!", "empty"));
-        for (const row of rows) {
-            const bubble = element("article", "", "bubble" + (row.sender_id === me.id ? " mine" : ""));
-            bubble.setAttribute("aria-label", row.sender_id === me.id ? "You" : $("chat-name").textContent);
-            const time = element("time", new Date(row.created_at).toLocaleString([], {month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"}));
-            time.dateTime = row.created_at;
-            bubble.append(element("p", row.body), time);
-            box.append(bubble);
-        }
-        if (forceBottom || nearBottom) box.scrollTop = box.scrollHeight;
-    }
-    async function loadChat(older = false) {
-        if (!ready || !peer || loadingChat || stopped) return;
-        loadingChat = true;
-        $("older").disabled = true;
-        const box = $("messages");
-        const previousHeight = box.scrollHeight, previousTop = box.scrollTop;
-        const first = !initialLoaded;
-        try {
-            const args = {p_peer: peer};
-            if (older && oldest) {
-                args.p_before_time = oldest.created_at; args.p_before_id = oldest.id;
-            } else if (newest) {
-                args.p_after_time = newest.created_at; args.p_after_id = newest.id;
-            }
-            const rows = await request(client.rpc("gamelink_chat_history", args));
-            if (stopped) return;
-            rows.forEach(row => records.set(row.id, row));
-            // Advance the polling cursor only from fetched history, never a send response.
-            const ascending = [...rows].sort((a,b) => a.created_at.localeCompare(b.created_at) || a.id.localeCompare(b.id));
-            if (!older && ascending.length) newest = ascending[ascending.length - 1];
-            if ((first || older) && ascending.length) oldest = ascending[0];
-            if (first || older) moreHistory = rows.length === 50;
-            initialLoaded = true;
-            if (rows.length || first) renderMessages(first);
-            if (older) box.scrollTop = previousTop + box.scrollHeight - previousHeight;
-            $("older").hidden = !moreHistory;
-            $("chat-status").textContent = "";
-        } catch (error) {
-            $("chat-status").textContent = explain(error);
-        } finally { loadingChat = false; $("older").disabled = false; }
-    }
-    async function loadInbox() {
-        if (!me || loadingInbox || stopped) return;
-        loadingInbox = true;
-        $("prev-inbox").disabled = true; $("next-inbox").disabled = true;
-        try {
-            const rows = await request(client.rpc("gamelink_inbox", {p_offset: inboxPage * 20}));
-            const visible = rows.slice(0,20);
-            const names = new Map();
-            if (visible.length) {
-                const profiles = await request(client.from("profiles").select("id,gamer_name").in("id",visible.map(row => row.peer_id)));
-                profiles.forEach(p => names.set(p.id,p.gamer_name));
-            }
-            if (stopped) return;
-            const fragment = document.createDocumentFragment();
-            for (const row of visible) {
-                const link = element("a", "", "thread" + (row.peer_id === peer ? " active" : ""));
-                link.href = "chat.html?player=" + encodeURIComponent(row.peer_id);
-                link.append(element("strong",names.get(row.peer_id) || "Gamer"),element("small",row.body));
-                link.append(element("span", "Open chat →", "open-chat"));
-                link.setAttribute("aria-label", "Open chat with " + (names.get(row.peer_id) || "Gamer"));
-                fragment.append(link);
-            }
-            // Avoid replacing a focused link during an automatic refresh.
-            if (!$("threads").contains(document.activeElement)) $("threads").replaceChildren(fragment);
-            $("inbox-status").textContent = visible.length ? "Tap a player to open your chat." : "No conversations here yet. Find a teammate and say hello.";
-            $("prev-inbox").hidden = inboxPage === 0;
-            $("next-inbox").hidden = rows.length <= 20;
-        } catch (error) { $("inbox-status").textContent = explain(error); }
-        finally { loadingInbox = false; $("prev-inbox").disabled = false; $("next-inbox").disabled = false; }
-    }
-    async function start() {
-        if (starting) return;
-        starting = true; $("retry-account").hidden = true;
-        $("account-status").textContent = "Checking your account…";
-        try {
-            if (!window.supabase) throw new Error("Could not load GameLink. Refresh this page to retry.");
-            if (!client) {
-                client = window.supabase.createClient("https://arlhkjocegnppfziikpo.supabase.co", "sb_publishable_aWWQyhe1KrXskToB9nU2_A_SsFpUPbv");
-                client.auth.onAuthStateChange(event => {
-                    if (event === "SIGNED_OUT") {
-                        stopped = true; ready = false; records.clear();
-                        $("messages").replaceChildren(); $("threads").replaceChildren();
-                        $("app").hidden = true; location.replace(peer && uuid.test(peer) ? "chat-login.html?player=" + encodeURIComponent(peer) : "login.html");
-                    }
-                });
-            }
-            me = await authUser();
-            if (!me || stopped) return;
-            $("app").hidden = false;
-            if (peer) {
-                if (!uuid.test(peer)) throw new Error("This chat link is invalid. Open Find Teammates and choose Chat.");
-                if (peer === me.id) throw new Error("Choose another player to start a conversation.");
-                let profile = await request(client.from("profiles").select("gamer_name,country,language").eq("id",peer).maybeSingle());
-                if (!profile) {
-                    const published = await request(client.from("gamelink_public_cards").select("card").eq("id",peer).maybeSingle());
-                    if (published) profile = {gamer_name: published.card?.values?.["gamer-name"] || "Gamer", language: published.card?.values?.language || ""};
-                    else {
-                        const history = await request(client.rpc("gamelink_chat_history", {p_peer:peer}));
-                        if (history.length) profile = {gamer_name:"Gamer"};
-                    }
-                }
-                if (!profile) throw new Error("This player profile is unavailable. Choose another teammate.");
-                $("chat-name").textContent = profile.gamer_name;
-                $("chat-detail").textContent = [profile.country,profile.language].filter(Boolean).join(" • ");
-                $("composer").hidden = false;
-            }
-            ready = true; $("account-status").textContent = "";
-            await Promise.all([loadInbox(),loadChat()]);
-        } catch (error) {
-            $("account-status").textContent = explain(error); $("retry-account").hidden = false;
-        } finally { starting = false; }
-    }
-    $("composer").addEventListener("submit", async event => {
-        event.preventDefault();
-        if (!ready || !peer || sending || stopped) return;
-        const body = $("message").value.trim();
-        if (!body || body.length > 2000) { $("send-status").textContent = "Write a message between 1 and 2,000 characters."; return; }
-        if (!pending) pending = {id:crypto.randomUUID(),sender_id:me.id,receiver_id:peer,body};
-        sending = true; $("send").disabled = true; $("message").readOnly = true;
-        $("send").textContent = "Sending…"; $("send-status").textContent = "";
-        try {
-            let row;
-            try {
-                row = await request(client.from("messages").insert(pending).select("id,sender_id,receiver_id,body,created_at").single());
-            } catch (error) {
-                // A timed-out request might have succeeded. Retrying uses the same ID.
-                if (error.code !== "23505") throw error;
-                row = await request(client.from("messages").select("id,sender_id,receiver_id,body,created_at").eq("id",pending.id).single());
-                if (row.sender_id !== me.id || row.receiver_id !== peer || row.body !== pending.body) throw new Error("Could not confirm this message. Refresh the page.");
-            }
-            if (stopped) return;
-            records.set(row.id,row); pending = null;
-            $("message").value = ""; $("send-status").textContent = "Sent.";
-            renderMessages(true); void loadInbox(); void loadChat();
-        } catch (error) {
-            $("send-status").textContent = explain(error) + " Your message is kept here. Tap Retry send to check or resend it.";
-        } finally {
-            sending = false; $("send").disabled = false;
-            $("message").readOnly = Boolean(pending);
-            $("send").textContent = pending ? "Retry send" : "Send →";
-        }
-    });
-    $("refresh-inbox").addEventListener("click", () => { void loadInbox(); });
-    $("retry-account").addEventListener("click", start);
-    $("older").addEventListener("click", () => loadChat(true));
-    $("refresh").addEventListener("click", () => { void loadInbox(); void loadChat(); });
-    $("prev-inbox").addEventListener("click", () => { if (!loadingInbox && inboxPage > 0) {inboxPage--; void loadInbox();} });
-    $("next-inbox").addEventListener("click", () => { if (!loadingInbox) {inboxPage++; void loadInbox();} });
-    const poll = setInterval(() => { if (!document.hidden && !stopped && ready) {void loadChat(); void loadInbox();} },5000);
-    document.addEventListener("visibilitychange", () => {if (!document.hidden && ready) {void loadChat(); void loadInbox();}});
-    window.addEventListener("pagehide", () => clearInterval(poll), {once:true});
-    window.addEventListener("pageshow", event => {if (event.persisted) location.reload();});
-    void start();
-})();
-</script>
+<script src="gamelink-notifications.js?v=1"></script>
+<script src="chat.js?v=2"></script>
 </body>
 </html>

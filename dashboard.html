@@ -457,7 +457,7 @@
                 <a href="teammates.html" class="view-games">
     Find Teammates →
 </a>
-                <a href="chat.html" class="view-games">Messages →</a>
+                <a href="chat.html" class="view-games">Messages <span data-unread-total hidden></span> →</a>
                 <a href="gamer-card.html" class="view-games">Create / Edit Gamer Card →</a>
             </div>
         </section>
@@ -517,13 +517,14 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="gamelink-notifications.js?v=1"></script>
 <!-- Dashboard code is contained here so this page uses one Supabase client. -->
 <script>
 (function () {
     "use strict";
     const $ = id => document.getElementById(id);
     let client, user, profile, busy = false, loading = false, stopped = false;
-    let clockOffset = 0, availabilityKnown = false;
+    let clockOffset = 0, availabilityKnown = false, notifications = null;
     function node(tag, text) { const el = document.createElement(tag); el.textContent = text; return el; }
     function errorText(error) {
         if (["PGRST205","PGRST202","42703","42P01"].includes(error.code))
@@ -578,6 +579,7 @@
                 client.auth.onAuthStateChange(event=>{if(event === "SIGNED_OUT") {stopped=true; $("dashboard-details").hidden=true; location.replace("login.html");}});
             }
             user = await getUser(); if(!user || stopped) return;
+            if(!notifications && window.GameLinkNotifications) notifications = window.GameLinkNotifications.start(client);
             profile = await request(client.from("profiles").select("gamer_name,country,language,bio,game_ranks").eq("id",user.id).maybeSingle());
             if(stopped) return;
             if(!profile?.gamer_name || !profile.country || !profile.language || !Object.keys(profile.game_ranks || {}).length) {location.replace("setup-profile.html"); return;}
