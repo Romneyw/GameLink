@@ -137,7 +137,7 @@ async function loadPublic(){
  const panel=document.querySelector('.preview-panel');panel.hidden=true;
  try{const id=new URLSearchParams(location.search).get('id');if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id||''))throw new Error('This profile link is incomplete. Ask the gamer for their full link.');
  const row=await query(client().from('gamelink_public_cards').select('card').eq('id',id).maybeSingle());if(!row)throw new Error('This card is unavailable or has been removed.');
- await applyCard(row.card);profileURL=linkFor(id);render();panel.hidden=false;$('draft-status').textContent=value('gamer-name')+' · Public gamer card · Ranks are self-reported';document.title=value('gamer-name')+' | GameLink';
+ await applyCard(row.card);profileURL=linkFor(id);render();panel.hidden=false;if($('chat-owner')){$('chat-owner').href='chat.html?player='+encodeURIComponent(id);$('chat-owner').hidden=false;}$('draft-status').textContent=value('gamer-name')+' · Public gamer card · Ranks are self-reported';document.title=value('gamer-name')+' | GameLink';
  }catch(e){$('draft-status').textContent=e.message||'Could not load this card. Refresh to try again.';}
 }
 

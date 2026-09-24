@@ -96,9 +96,9 @@ a:focus-visible,button:focus-visible,textarea:focus-visible{outline:3px solid #f
                 client.auth.getUser(),
                 new Promise((_, reject) => { timer = setTimeout(() => reject(new Error("Account check took too long. Tap Try Again.")), 15000); })
             ]);
-            if (result.error?.name === "AuthSessionMissingError") { location.replace("login.html"); return null; }
+            if (result.error?.name === "AuthSessionMissingError") { location.replace(peer && uuid.test(peer) ? "chat-login.html?player=" + encodeURIComponent(peer) : "login.html"); return null; }
             if (result.error) throw result.error;
-            if (!result.data.user) { location.replace("login.html"); return null; }
+            if (!result.data.user) { location.replace(peer && uuid.test(peer) ? "chat-login.html?player=" + encodeURIComponent(peer) : "login.html"); return null; }
             return result.data.user;
         } finally { clearTimeout(timer); }
     }
@@ -194,7 +194,7 @@ a:focus-visible,button:focus-visible,textarea:focus-visible{outline:3px solid #f
                     if (event === "SIGNED_OUT") {
                         stopped = true; ready = false; records.clear();
                         $("messages").replaceChildren(); $("threads").replaceChildren();
-                        $("app").hidden = true; location.replace("login.html");
+                        $("app").hidden = true; location.replace(peer && uuid.test(peer) ? "chat-login.html?player=" + encodeURIComponent(peer) : "login.html");
                     }
                 });
             }
@@ -204,7 +204,15 @@ a:focus-visible,button:focus-visible,textarea:focus-visible{outline:3px solid #f
             if (peer) {
                 if (!uuid.test(peer)) throw new Error("This chat link is invalid. Open Find Teammates and choose Chat.");
                 if (peer === me.id) throw new Error("Choose another player to start a conversation.");
-                const profile = await request(client.from("profiles").select("gamer_name,country,language").eq("id",peer).maybeSingle());
+                let profile = await request(client.from("profiles").select("gamer_name,country,language").eq("id",peer).maybeSingle());
+                if (!profile) {
+                    const published = await request(client.from("gamelink_public_cards").select("card").eq("id",peer).maybeSingle());
+                    if (published) profile = {gamer_name: published.card?.values?.["gamer-name"] || "Gamer", language: published.card?.values?.language || ""};
+                    else {
+                        const history = await request(client.rpc("gamelink_chat_history", {p_peer:peer}));
+                        if (history.length) profile = {gamer_name:"Gamer"};
+                    }
+                }
                 if (!profile) throw new Error("This player profile is unavailable. Choose another teammate.");
                 $("chat-name").textContent = profile.gamer_name;
                 $("chat-detail").textContent = [profile.country,profile.language].filter(Boolean).join(" • ");
